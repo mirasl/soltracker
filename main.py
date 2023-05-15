@@ -12,14 +12,31 @@ frequencies = [
 	4186.01,4434.92,4698.63,4978.03,5274.04,5587.65,5919.91,6271.93,6644.88,7040.00,7458.62,7902.13
 ]
 
-s = Server(audio="jack").boot()
-s.start()
-testTable = CosTable()
-testOut = Osc(table=testTable).out()
+s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
 
-for note in frequencies:
-	testOut.freq = note
-	print(note)
-	time.sleep(0.01)
+# Pitch and duration data
+pits = [5, 0, 5, 0, 6, 0, 8, 0, 8, 0, 6, 0, 5, 0, 3, 0, 1, 0, 1, 0, 3, 0, 5, 0, 5, 0, 0, 3, 3, 0, 0, 0]
+for i in range(len(pits)):
+	if pits[i] != 0:
+		pits[i] = frequencies[pits[i] + 60]
+time_seq = [0.125]
+# Duration / time to give the integer sequence to Seq object
 
-testOut.stop()
+
+# Amplitude envelope
+env = CosTable([(0,0),(100,1),(500,.5),(8192,0)])
+
+# trigger sequence base on duration sequence
+seq = Seq(seq=time_seq).play()
+# get pitch and duration from lists (.mix(1) to avoid duplication)
+pit = Iter(seq.mix(1), choice=pits)
+ones = Iter(seq.mix(1), choice=[1.0])
+
+dur = Iter(seq.mix(1), choice=time_seq)
+# trig the amplitude envelope (no mix to keep the polyphony and not truncate an envelope)
+amp = TrigEnv(seq, table=env, dur=dur, mul=.3)
+print(pits)
+# output
+osc = SineLoop(freq=pit, feedback=.07, mul=amp).out() #(pit / 2*abs(pit)) + 0.5
+
+s.gui(locals())

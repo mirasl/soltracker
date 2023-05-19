@@ -27,21 +27,16 @@ def generate_sequence(notes : list, dur : float):
 		notesIndex += 1
 	return seq
 
+# Changes midi pitches to piano frequencies
 def to_frequency(pits : list, addend : int):
 	for i in range(len(pits)):
 		if pits[i] != 0:
 			pits[i] = frequencies[pits[i] + addend]
 	return pits
 
-
-s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
-
-piano_table = HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015])
-cos_table = CosTable()
-triangle_table = TriangleTable()
-
-def generate_track(wave_table : PyoTableObject, envelope_table : PyoObject, frequencies : list, 
-		base_duration : float, mul : float = 0.1):
+# Generates a track and plays it asynchronously
+def generate_track(wave_table : PyoTableObject, envelope_table : PyoTableObject, frequencies : list, 
+		base_duration : float, mul : float = 0.1, feedback : float = 0.0):
 	durations = generate_sequence(frequencies, base_duration)
 	frequencies = [i for i in frequencies if i != 0]
 
@@ -52,11 +47,32 @@ def generate_track(wave_table : PyoTableObject, envelope_table : PyoObject, freq
 
 	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
 
-	osc = Osc(table=wave_table, freq=this_pitch, mul=envelope).out()
+	osc = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback).out()
 
 	return osc
 
+def generate_noise_track(pattern : list, base_duration : float, envelope_table : PyoTableObject, 
+		mul : float = 0.1):
+	durations = generate_sequence(pattern, base_duration)
+	sequence = Seq(seq=durations).play()
+	this_duration = Iter(sequence.mix(1), choice=durations)
 
+	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
+	noise = Noise(mul=envelope).out()
+
+	return noise
+
+
+
+# def generate_percussion(beats : list, base_duration : float, envelope_table : PyoTableObject):
+# 	durations = generate_sequence(beats, base_duration)
+# 	sequence = Seq(seq=durations).play()
+# 	this_duration = Iter(sequence.mix(1), choice=durations)
+
+# 	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=0.1)
+# 	loop = SineLoop(feedback=100, freq=440, mul=envelope).out()
+
+# 	return loop
 
 
 # class track:
@@ -70,22 +86,28 @@ def generate_track(wave_table : PyoTableObject, envelope_table : PyoObject, freq
 # 		this_duration = Iter(sequence.mix(1), choice=durations)
 # 		self.osc = Osc(table=table, freq=this_frequency, mul=envolope)
 
+s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
+
+piano_table = HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015])
+cos_table = CosTable()
+triangle_table = TriangleTable()
+
 piano_envelope = CosTable([(0,0),(50,1),(4000,.5),(8192,0)])
 spizazz_envelope = LinTable([(0,0),(10,1),(8000,0.1),(8192,0)])
 
 piano_track = generate_track(
 	wave_table=piano_table, 
 	envelope_table=piano_envelope, 
-	frequencies=to_frequency([3, 0, 5, 6, 0, 8, 3, 5, 0, 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 57), 
+	frequencies=to_frequency([3,0,5,6,0,8,3,5,0,1,0,3,0,0,0,0,0,0,0,0,0,0,0,0], 57), 
 	base_duration=0.07 * 4/3,
-	mul=0.35
+	mul=0.25
 )
 triangle_track = generate_track(
 	wave_table=triangle_table, 
 	envelope_table=CosTable([(0,0),(25,1),(4000,.5),(1892,0)]), 
 	frequencies=to_frequency([3, 8, 1, 0], 50 - 24),
 	base_duration=0.56, 
-	mul=0.6
+	mul=0.4
 )
 spizazz_track1 = generate_track(
 	wave_table=CosTable(),
@@ -113,19 +135,31 @@ spizazz_track4 = generate_track(
 )
 # rand_list = [random.uniform(0,1) for i in range(100)]
 # percussion_track = generate_track(
-# 	wave_table=CosTable([(0,1),(8191,1)]),
+# 	wave_table=CosTable(),
 # 	envelope_table=spizazz_envelope,
-# 	frequencies=to_frequency([6,0,0,6,0,6,6,0,0,6,0,6,6,0,0,6,0,6,6,0,6,24,12,1],50),
+# 	frequencies=to_frequency([6,0,0,6,0,6,6,0,0,6,0,6,6,0,0,6,0,6,6,0,6,24,12,1], 1),
 # 	base_duration=0.28/3,
-# 	mul=0.5
+# 	feedback=1000.0
 # )
+percussion_track = generate_noise_track(
+	pattern=[6,0,0,6,0,6,6,0,0,6,0,6,6,0,0,6,0,6,6,0,6,24,12,1],
+	base_duration=0.28/3,
+	envelope_table=spizazz_envelope
+)
 ladida_track = generate_track(
 	wave_table=HannTable(),
 	envelope_table=spizazz_envelope,
-	frequencies=to_frequency([3,0,5,6,0,3,8,0,10,12,0,15,13,0,8,5,0,1,5,0,6,8,5,1],50 + 12),
+	frequencies=to_frequency([3,0,5,6,0,3,8,0,10,12,0,15,13,0,8,5,0,1,5,0,6,8,5,1], 50 + 12),
 	base_duration=0.28/3,
 	mul=0.35
 )
+scope1 = Scope(piano_track)
+scope2 = Scope(triangle_track)
+scope3 = Scope(spizazz_track1)
+scope4 = Scope(spizazz_track2)
+scope5 = Scope(spizazz_track3)
+scope6 = Scope(spizazz_track4)
+scope7 = Scope(percussion_track)
 
 # for table in instrument_tables:
 # 	# Pitch as a list:

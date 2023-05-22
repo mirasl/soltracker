@@ -1,4 +1,4 @@
-from main import *
+from soltracker import *
 
 s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
 

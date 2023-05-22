@@ -12,7 +12,7 @@ spizazz_envelope = LinTable([(0,0),(10,1),(8000,0.1),(8192,0)])
 piano_track = generate_track(
 	wave_table=piano_table, 
 	envelope_table=piano_envelope, 
-	frequencies=s2h("re - mi fa - so re mi - do - re - - - - - - - - - - - - ", 57), 
+	frequencies=s2h("la - ti ^do - ^re la ti - so - la - - - - - - - - - - - - ", 50), 
 	base_duration=0.07 * 4/3,
 	mul=0.25
 )

@@ -82,7 +82,6 @@ def generate_sequence(notes : list, dur : float):
 		notesIndex += 1
 	return seq
 
-
 # Generates a track and plays it asynchronously
 def generate_track(wave_table : PyoTableObject, envelope_table : PyoTableObject, frequencies : list, 
 		base_duration : float, mul : float = 0.1, feedback : float = 0.0):
@@ -100,6 +99,7 @@ def generate_track(wave_table : PyoTableObject, envelope_table : PyoTableObject,
 
 	return osc
 
+# generates a noise (static) track and plays it asynchronously
 def generate_noise_track(pattern : list, base_duration : float, envelope_table : PyoTableObject, 
 		mul : float = 0.1):
 	durations = generate_sequence(pattern, base_duration)
@@ -111,23 +111,44 @@ def generate_noise_track(pattern : list, base_duration : float, envelope_table :
 
 	return noise
 
-# Basic stuff:
-# 	Each instrument has a
-# 		- Table (of harmonics)
-# 		- Envelope
-#
-#	A track contains
-#		- Instrument
-#		- Pitches
-#		- Automation channels
-#
-# More:
-# 	Modifiers
-# 		- Pitch bend
-# 		- Vibrato
-# 		- Volume
-# 		- Note length (rest vs hold)
-#		- EQ shift over time
-#		- Tone shift over time
-#		- Microtonal pitches
-#		- Panning
+"""
+Basic stuff:
+	Each instrument has a
+		- Table (of harmonics)
+		- Envelope
+
+	A track contains
+		- Instrument
+		- Pitches
+		- Automation channels (bus to them??)
+
+More:
+	Modifiers
+		- Pitch bend
+		- Vibrato
+		- Volume
+		- Note length (rest vs hold)
+		- EQ shift over time
+		- Tone shift over time
+		- Microtonal pitches
+		- Panning
+		- Tempo
+
+Workflow:
+	Create a new track
+		- Create a wave table
+		- Create an envelope table
+		- Input frequency list
+		- Input other info (max volume, base duration, etc) as necessary
+	Create a channel
+		- Select type (pitch bend, vibrato, volume, etc)
+		- Input channel table
+	Bus to channels
+		- Link a track to a channel
+
+OVERALL:
+- Header (bpm and stuff)
+- Tracks (instruments and their notes/frequencies)
+- Channels (gradual modifiers)
+- Buses (link tracks to channels)
+"""

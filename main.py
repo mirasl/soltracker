@@ -13,13 +13,68 @@ frequencies = [
 	4186.01,4434.92,4698.63,4978.03,5274.04,5587.65,5919.91,6271.93,6644.88,7040.00,7458.62,7902.13
 ]
 
+solfege = {
+	"do" : 1,
+	"di" : 2,
+	"ra" : 2,
+	"re" : 3,
+	"ri" : 4,
+	"me" : 4,
+	"mi" : 5,
+	"fa" : 6,
+	"fi" : 7,
+	"se" : 7,
+	"so" : 8,
+	"sol" : 8,
+	"si" : 9,
+	"le" : 9,
+	"la" : 10,
+	"li" : 11,
+	"te" : 11,
+	"ti" : 12,
+}
+
+# parses string of solfege and returns array of midi pitches
+def parse_solfege(solfege_string : str):
+	pitches = []
+	word = ""
+
+	for char in solfege_string:
+		if char == ' ':
+			if word[0] == '^':
+				pitches.append(solfege[word[1:]])
+				pitches[len(pitches) - 1] += 12
+			elif word[0] == '/':
+				pitches.append(solfege[word[1:]])
+				pitches[len(pitches) - 1] -= 12
+			elif word[0] == '-':
+				pitches.append(None)
+			else:
+				pitches.append(solfege[word])
+			word = ""
+		else:
+			word += char
+	
+	return pitches
+
+# Changes midi pitches to piano frequencies
+def to_frequency(pits : list, addend : int = 50):
+	for i in range(len(pits)):
+		if pits[i] != None:
+			pits[i] = frequencies[pits[i] + addend]
+	return pits
+
+# "solfege to hertz" (nonverbose helper method)
+def s2h(solfege_string : str, addend : int = 50):
+	return to_frequency(parse_solfege(solfege_string), addend)
+
 # Generates a sequence of note durations based on pitches
 def generate_sequence(notes : list, dur : float):
 	seq = [dur] * len(notes)
 	notesIndex = 1
 	seqIndex = 1
 	while notesIndex < len(notes):
-		if notes[notesIndex] == 0:
+		if notes[notesIndex] == None:
 			seq.pop(seqIndex)
 			seq[seqIndex - 1] += dur
 		else:
@@ -27,18 +82,12 @@ def generate_sequence(notes : list, dur : float):
 		notesIndex += 1
 	return seq
 
-# Changes midi pitches to piano frequencies
-def to_frequency(pits : list, addend : int):
-	for i in range(len(pits)):
-		if pits[i] != 0:
-			pits[i] = frequencies[pits[i] + addend]
-	return pits
 
 # Generates a track and plays it asynchronously
 def generate_track(wave_table : PyoTableObject, envelope_table : PyoTableObject, frequencies : list, 
 		base_duration : float, mul : float = 0.1, feedback : float = 0.0):
 	durations = generate_sequence(frequencies, base_duration)
-	frequencies = [i for i in frequencies if i != 0]
+	frequencies = [i for i in frequencies if i != None]
 
 	sequence = Seq(seq=durations).play()
 
@@ -62,29 +111,7 @@ def generate_noise_track(pattern : list, base_duration : float, envelope_table :
 
 	return noise
 
-
-
-# def generate_percussion(beats : list, base_duration : float, envelope_table : PyoTableObject):
-# 	durations = generate_sequence(beats, base_duration)
-# 	sequence = Seq(seq=durations).play()
-# 	this_duration = Iter(sequence.mix(1), choice=durations)
-
-# 	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=0.1)
-# 	loop = SineLoop(feedback=100, freq=440, mul=envelope).out()
-
-# 	return loop
-
-
-# class track:
-# 	def __init__(self, table : PyoTableObject, envelope : PyoObject, frequencies : list):
-# 		durations = generate_sequence(frequencies, 0.125)
-# 		self.frequencies = [i for i in frequencies if i != 0]
-
-# 		sequence = Seq(seq=durations).Play()
-		
-# 		this_frequency = Iter(sequence.mix(1), choice=frequencies)
-# 		this_duration = Iter(sequence.mix(1), choice=durations)
-# 		self.osc = Osc(table=table, freq=this_frequency, mul=envolope)
+# =============================================================================================== #
 
 s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
 
@@ -98,58 +125,50 @@ spizazz_envelope = LinTable([(0,0),(10,1),(8000,0.1),(8192,0)])
 piano_track = generate_track(
 	wave_table=piano_table, 
 	envelope_table=piano_envelope, 
-	frequencies=to_frequency([3,0,5,6,0,8,3,5,0,1,0,3,0,0,0,0,0,0,0,0,0,0,0,0], 57), 
+	frequencies=s2h("re - mi fa - so re mi - do - re - - - - - - - - - - - - ", 57), 
 	base_duration=0.07 * 4/3,
 	mul=0.25
 )
 triangle_track = generate_track(
 	wave_table=triangle_table, 
 	envelope_table=CosTable([(0,0),(25,1),(4000,.5),(1892,0)]), 
-	frequencies=to_frequency([3, 8, 1, 0], 50 - 24),
+	frequencies=s2h("re so do - ", 50 - 24),
 	base_duration=0.56, 
 	mul=0.4
 )
 spizazz_track1 = generate_track(
 	wave_table=CosTable(),
 	envelope_table=spizazz_envelope,
-	frequencies=to_frequency([6,6,5,0], 50),
+	frequencies=s2h("fa fa mi - ", 50),
 	base_duration=0.56
 )
 spizazz_track2 = generate_track(
 	wave_table=CosTable(),
 	envelope_table=spizazz_envelope,
-	frequencies=to_frequency([13,12,12,0], 50),
+	frequencies=s2h("do ti ti - ", 50),
 	base_duration=0.56
 )
 spizazz_track3 = generate_track(
 	wave_table=CosTable(),
 	envelope_table=spizazz_envelope,
-	frequencies=to_frequency([17,16,15,0], 50),
+	frequencies=s2h("mi me re - ", 50),
 	base_duration=0.56
 )
 spizazz_track4 = generate_track(
 	wave_table=CosTable(),
 	envelope_table=spizazz_envelope,
-	frequencies=to_frequency([22,21,20,0], 50),
+	frequencies=s2h("la le so - ", 50),
 	base_duration=0.56
 )
-# rand_list = [random.uniform(0,1) for i in range(100)]
-# percussion_track = generate_track(
-# 	wave_table=CosTable(),
-# 	envelope_table=spizazz_envelope,
-# 	frequencies=to_frequency([6,0,0,6,0,6,6,0,0,6,0,6,6,0,0,6,0,6,6,0,6,24,12,1], 1),
-# 	base_duration=0.28/3,
-# 	feedback=1000.0
-# )
 percussion_track = generate_noise_track(
-	pattern=[6,0,0,6,0,6,6,0,0,6,0,6,6,0,0,6,0,6,6,0,6,24,12,1],
+	pattern=parse_solfege("fi - - fi - fi fi - - fi - fi fi - - fi - fi fi - fi ^fi ^do do "),
 	base_duration=0.28/3,
 	envelope_table=spizazz_envelope
 )
 ladida_track = generate_track(
 	wave_table=HannTable(),
 	envelope_table=spizazz_envelope,
-	frequencies=to_frequency([3,0,5,6,0,3,8,0,10,12,0,15,13,0,8,5,0,1,5,0,6,8,5,1], 50 + 12),
+	frequencies=s2h("re - mi fa - re so - la ti - ^re ^do - so mi - do mi - fa so mi do ", 50 + 12),
 	base_duration=0.28/3,
 	mul=0.35
 )
@@ -160,28 +179,6 @@ scope4 = Scope(spizazz_track2)
 scope5 = Scope(spizazz_track3)
 scope6 = Scope(spizazz_track4)
 scope7 = Scope(percussion_track)
-
-# for table in instrument_tables:
-# 	# Pitch as a list:
-# 	pitches = ToFrequency([1, 1, 13, 0, 8, 0, 0, 7, 0, 6, 0, 4, 0, 1, 4, 6], 50)
-# 	# Generate durations in a sequence based upon pitches:
-# 	durations = generate_sequence(pitches, 0.125)
-# 	# Remove zeroes from pits:
-# 	pitches = [i for i in pitches if i != 0]
-
-
-# 	envelope_table = CosTable([(0,0),(50,1),(4000,.5),(8192,0)])
-
-# 	sequence = Seq(seq=durations).play()
-
-# 	this_pitch = Iter(sequence.mix(1), choice=pitches)
-# 	this_duration = Iter(sequence.mix(1), choice=durations)
-
-# 	envolope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=.3)
-
-# 	osc = Osc(table=table, freq=this_pitch, mul=envolope).out()
-
-# 	scope = Scope(osc)
 
 s.gui(locals())
 
@@ -194,9 +191,15 @@ s.gui(locals())
 #	A track contains
 #		- Instrument
 #		- Pitches
+#		- Automation channels
+#
 # More:
 # 	Modifiers
 # 		- Pitch bend
 # 		- Vibrato
 # 		- Volume
 # 		- Note length (rest vs hold)
+#		- EQ shift over time
+#		- Tone shift over time
+#		- Microtonal pitches
+#		- Panning

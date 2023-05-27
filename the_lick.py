@@ -16,35 +16,22 @@ piano_track = generate_track(
 	base_duration=0.07 * 4/3,
 	mul=0.25
 )
-triangle_track = generate_track(
+bass_track = generate_track(
 	wave_table=triangle_table, 
 	envelope_table=CosTable([(0,0),(25,1),(4000,.5),(1892,0)]), 
 	frequencies=s2h("re so do - ", 50 - 24),
 	base_duration=0.56, 
 	mul=0.4
 )
-spizazz_track1 = generate_track(
+spizazz_track = generate_chord_track(
 	wave_table=CosTable(),
 	envelope_table=spizazz_envelope,
-	frequencies=s2h("fa fa mi - ", 50),
-	base_duration=0.56
-)
-spizazz_track2 = generate_track(
-	wave_table=CosTable(),
-	envelope_table=spizazz_envelope,
-	frequencies=s2h("do ti ti - ", 50),
-	base_duration=0.56
-)
-spizazz_track3 = generate_track(
-	wave_table=CosTable(),
-	envelope_table=spizazz_envelope,
-	frequencies=s2h("mi me re - ", 50),
-	base_duration=0.56
-)
-spizazz_track4 = generate_track(
-	wave_table=CosTable(),
-	envelope_table=spizazz_envelope,
-	frequencies=s2h("la le so - ", 50),
+	frequency_list=[
+			s2h("fa fa mi - ", 50),
+			s2h("^do ti ti - ", 50),
+			s2h("^mi ^mi ^re - ", 50),
+			s2h("^la ^le ^so - ", 50),
+				],
 	base_duration=0.56
 )
 percussion_track = generate_noise_track(
@@ -59,12 +46,11 @@ ladida_track = generate_track(
 	base_duration=0.28/3,
 	mul=0.35
 )
+
 scope1 = Scope(piano_track)
-scope2 = Scope(triangle_track)
-scope3 = Scope(spizazz_track1)
-scope4 = Scope(spizazz_track2)
-scope5 = Scope(spizazz_track3)
-scope6 = Scope(spizazz_track4)
-scope7 = Scope(percussion_track)
+scope2 = Scope(bass_track)
+scope3 = Scope(spizazz_track)
+scope4 = Scope(percussion_track)
+scope5 = Scope(ladida_track)
 
 s.gui(locals())

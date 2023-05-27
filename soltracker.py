@@ -1,5 +1,13 @@
 from pyo import *
 import random
+# import wx
+
+# app = wx.App()
+# frame = wx.Frame(None, title="Hello World")
+# frame.Show()
+# slider = PyoGuiControlSlider(parent=frame, minvalue=0,maxvalue=1)
+# slider.Show()
+# # app.MainLoop()
 
 frequencies = [
 	16.35, 	17.32, 	18.35, 	19.45, 	20.60, 	21.83, 	23.12, 	24.50, 	25.96, 	27.50, 	29.14, 	30.87,
@@ -111,6 +119,15 @@ def generate_noise_track(pattern : list, base_duration : float, envelope_table :
 
 	return noise
 
+# generates multiple tracks and plays them all asynchronously
+def generate_chord_track(wave_table : PyoTableObject, envelope_table : PyoTableObject, 
+		frequency_list : list, base_duration : float, mul : float = 0.1, feedback : float = 0.0):
+	tracks = []
+	for frequencies in frequency_list:
+		tracks.append(generate_track(wave_table, envelope_table, frequencies,
+				base_duration, mul, feedback))
+	return tracks
+
 """
 Basic stuff:
 	Each instrument has a
@@ -142,7 +159,7 @@ Workflow:
 		- Input other info (max volume, base duration, etc) as necessary
 	Create a channel
 		- Select type (pitch bend, vibrato, volume, etc)
-		- Input channel table
+		- Input channel list
 	Bus to channels
 		- Link a track to a channel
 

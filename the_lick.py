@@ -1,17 +1,17 @@
 from soltracker import *
 
-s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
+# s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
 
-piano_table = HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015])
+piano_table = tone_library["piano"]
 cos_table = CosTable()
 triangle_table = TriangleTable()
 
-piano_envelope = CosTable([(0,0),(50,1),(4000,.5),(8192,0)])
-spizazz_envelope = LinTable([(0,0),(10,1),(8000,0.1),(8192,0)])
+piano_envelope = envelope_library["piano"]
+spizazz_envelope = envelope_library["spizazz"]
 
 piano_track = generate_track(
-	wave_table=piano_table, 
-	envelope_table=piano_envelope, 
+	wave_table=tone_library["piano"], 
+	envelope_table=spizazz_envelope, 
 	frequencies=s2h("la - ti ^do - ^re la ti - so - la - - - - - - - - - - - - ", 50), 
 	base_duration=0.07 * 4/3,
 	mul=0.25

@@ -9,6 +9,8 @@ import random
 # slider.Show()
 # # app.MainLoop()
 
+s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
+
 frequencies = [
 	16.35, 	17.32, 	18.35, 	19.45, 	20.60, 	21.83, 	23.12, 	24.50, 	25.96, 	27.50, 	29.14, 	30.87,
 	32.70, 	34.65, 	36.71, 	38.89, 	41.20, 	43.65, 	46.25, 	49.00, 	51.91, 	55.00, 	58.27, 	61.74,
@@ -40,6 +42,17 @@ solfege = {
 	"li" : 11,
 	"te" : 11,
 	"ti" : 12,
+}
+
+tone_library = {
+	"piano" : HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015]),
+	"plink-mallets" : HarmTable([1,0,-1,0,1,0,-1]),
+	"oomph" : HarmTable([1,0.2,-0.2,-0.2,0.2])
+}
+
+envelope_library = {
+	"spizazz" : LinTable([(0,0),(10,1),(8000,0.1),(8192,0)]),
+	"piano" : CosTable([(0,0),(50,1),(4000,.5),(8192,0)])
 }
 
 # parses string of solfege and returns array of midi pitches

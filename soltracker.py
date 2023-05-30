@@ -103,7 +103,8 @@ def generate_sequence(notes : list, dur : float):
 		notesIndex += 1
 	return seq
 
-# Generates a track and plays it asynchronously
+# Generates a track and plays it asynchronously, returns 2-index list of osc for each channel (left
+# and right, respectively)
 def generate_track(wave_table : PyoTableObject, envelope_table : PyoTableObject, frequencies : list, 
 		base_duration : float, mul : float = 0.1, feedback : float = 0.0):
 	durations = generate_sequence(frequencies, base_duration)
@@ -116,11 +117,13 @@ def generate_track(wave_table : PyoTableObject, envelope_table : PyoTableObject,
 
 	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
 
-	osc = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback).out()
+	oscLeft = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback).out(0)
+	oscRight = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback).out(1)
 
-	return osc
+	return [oscLeft, oscRight]
 
-# generates a noise (static) track and plays it asynchronously
+# generates a noise (static) track and plays it asynchronously, returns 2-index list of osc for 
+# each channel (left and right, respectively)
 def generate_noise_track(pattern : list, base_duration : float, envelope_table : PyoTableObject, 
 		mul : float = 0.1):
 	durations = generate_sequence(pattern, base_duration)
@@ -128,9 +131,11 @@ def generate_noise_track(pattern : list, base_duration : float, envelope_table :
 	this_duration = Iter(sequence.mix(1), choice=durations)
 
 	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
-	noise = Noise(mul=envelope).out()
 
-	return noise
+	noiseLeft = Noise(mul=envelope).out(0)
+	noiseRight = Noise(mul=envelope).out(1)
+
+	return [noiseLeft, noiseRight]
 
 # generates multiple tracks and plays them all asynchronously
 def generate_chord_track(wave_table : PyoTableObject, envelope_table : PyoTableObject, 
@@ -153,16 +158,25 @@ Basic stuff:
 		- Automation channels (bus to them??)
 
 More:
-	Modifiers
-		- Pitch bend
-		- Vibrato
+	Modifiers (ordered roughly from most to least important)
 		- Volume
-		- Note length (rest vs hold)
-		- EQ shift over time
-		- Tone shift over time
-		- Microtonal pitches
+			control mul with sequence
 		- Panning
+			???
+		- Note length (rest vs hold)
+			???
+		- Vibrato
+			???
+		- Pitch bend
+			???
+		- EQ shift over time
+			maybe combine with volume???
 		- Tempo
+			???
+		- Microtonal pitches
+			???
+		- Tone shift over time
+			???
 
 Workflow:
 	Create a new track

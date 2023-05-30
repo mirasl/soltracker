@@ -27,11 +27,11 @@ spizazz_track = generate_chord_track(
 	wave_table=CosTable(),
 	envelope_table=spizazz_envelope,
 	frequency_list=[
-			s2h("fa fa mi - ", 50),
-			s2h("^do ti ti - ", 50),
-			s2h("^mi ^mi ^re - ", 50),
-			s2h("^la ^le ^so - ", 50),
-				],
+		s2h("fa fa mi - ", 50),
+		s2h("^do ti ti - ", 50),
+		s2h("^mi ^mi ^re - ", 50),
+		s2h("^la ^le ^so - ", 50),
+	],
 	base_duration=0.56
 )
 percussion_track = generate_noise_track(
@@ -47,10 +47,10 @@ ladida_track = generate_track(
 	mul=0.35
 )
 
-scope1 = Scope(piano_track)
-scope2 = Scope(bass_track)
-scope3 = Scope(spizazz_track)
-scope4 = Scope(percussion_track)
-scope5 = Scope(ladida_track)
+scope1 = Scope(piano_track[0])
+scope2 = Scope(bass_track[0])
+scope3 = Scope(spizazz_track[0])
+scope4 = Scope(percussion_track[0])
+scope5 = Scope(ladida_track[0])
 
 s.gui(locals())

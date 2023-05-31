@@ -51,7 +51,7 @@ tone_library = {
 }
 
 envelope_library = {
-	"spizazz" : LinTable([(0,0),(10,1),(8000,0.1),(8192,0)]),
+	"spizazz" : LinTable([(0,0),(10,1),(8000,0.3),(8192,0)]),
 	"piano" : CosTable([(0,0),(50,1),(4000,.5),(8192,0)])
 }
 
@@ -195,4 +195,12 @@ OVERALL:
 - Tracks (instruments and their notes/frequencies)
 - Channels (gradual modifiers)
 - Buses (link tracks to channels)
+
+ALTERNATE PLAN:
+- Create automation components
+	- Pitch
+	- Envelope
+	- MacroDynamics
+	- etc...
+- Link automation components to tracks
 """

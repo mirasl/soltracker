@@ -2,14 +2,20 @@ from soltracker import *
 
 # s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
 
+# wavetable:
 piano_table = tone_library["piano"]
 cos_table = CosTable()
 triangle_table = TriangleTable()
 
+# envelope:
 piano_envelope = envelope_library["piano"]
 spizazz_envelope = envelope_library["spizazz"]
 
+# macro volume: (a control signal which directly feeds into mul)
 thump_volume = Linseg([(0,0.00), (0.14/3,0.5), (0.56/3,0.6)], loop=True).play()
+
+# pan: (a control signal which represents the percentage of panning recieved by LEFT channel)
+dizzy_pan = Linseg([(0,0), (0.56, 1)], loop=True).play()
 
 piano_track = generate_track(
 	wave_table=tone_library["piano"], 
@@ -38,7 +44,7 @@ spizazz_track = generate_chord_track(
 		s2h("^la ^le ^so - ", 50),
 	],
 	base_duration=0.56,
-	mul=thump_volume
+	mul=[thump_volume*dizzy_pan, thump_volume*(1-dizzy_pan)]
 )
 percussion_track = generate_noise_track(
 	pattern=parse_solfege("fi - - fi - fi fi - - fi - fi fi - - fi - fi fi - fi ^fi ^do do "),

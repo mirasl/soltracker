@@ -9,6 +9,8 @@ triangle_table = TriangleTable()
 piano_envelope = envelope_library["piano"]
 spizazz_envelope = envelope_library["spizazz"]
 
+thump_volume = Linseg([(0,0.00), (0.14/3,0.5), (0.56/3,0.6)], loop=True).play()
+
 piano_track = generate_track(
 	wave_table=tone_library["piano"], 
 	envelope_table=spizazz_envelope, 
@@ -16,6 +18,9 @@ piano_track = generate_track(
 	base_duration=0.07 * 4/3,
 	mul=0.25
 )
+# lfo1 = Sine(freq=.1, mul=500, add=1000)
+# lfo2 = Sine(freq=.4).range(2, 8)
+# bandpass = ButBP(piano_track[0], freq=lfo1).out()
 bass_track = generate_track(
 	wave_table=triangle_table, 
 	envelope_table=CosTable([(0,0),(25,1),(4000,.5),(1892,0)]), 
@@ -32,7 +37,8 @@ spizazz_track = generate_chord_track(
 		s2h("^mi ^mi ^re - ", 50),
 		s2h("^la ^le ^so - ", 50),
 	],
-	base_duration=0.56
+	base_duration=0.56,
+	mul=thump_volume
 )
 percussion_track = generate_noise_track(
 	pattern=parse_solfege("fi - - fi - fi fi - - fi - fi fi - - fi - fi fi - fi ^fi ^do do "),
@@ -46,11 +52,14 @@ ladida_track = generate_track(
 	base_duration=0.28/3,
 	mul=0.35
 )
+# line = Linseg([(0,0), (5,2000)], loop=True)
+# a = Sine(freq=line, mul=[0.3, 0.3]).out()
+# line.play()
 
-scope1 = Scope(piano_track[0])
-scope2 = Scope(bass_track[0])
-scope3 = Scope(spizazz_track[0])
-scope4 = Scope(percussion_track[0])
-scope5 = Scope(ladida_track[0])
+scope1 = Scope(piano_track)
+scope2 = Scope(bass_track)
+scope3 = Scope(spizazz_track)
+scope7 = Scope(percussion_track)
+scope8 = Scope(ladida_track)
 
 s.gui(locals())

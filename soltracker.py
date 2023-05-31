@@ -116,11 +116,12 @@ def generate_track(wave_table : PyoTableObject, envelope_table : PyoTableObject,
 	this_duration = Iter(sequence.mix(1), choice=durations)
 
 	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
+	macro_envelope = LinTable()
 
-	oscLeft = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback).out(0)
-	oscRight = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback).out(1)
+	osc = OscLoop(table=[wave_table, wave_table], freq=this_pitch, mul=envelope, feedback=feedback).out([0,1])
+	#oscRight = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback)
 
-	return [oscLeft, oscRight]
+	return osc
 
 # generates a noise (static) track and plays it asynchronously, returns 2-index list of osc for 
 # each channel (left and right, respectively)
@@ -132,10 +133,9 @@ def generate_noise_track(pattern : list, base_duration : float, envelope_table :
 
 	envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
 
-	noiseLeft = Noise(mul=envelope).out(0)
-	noiseRight = Noise(mul=envelope).out(1)
+	noise = Noise(mul=[envelope, envelope]).out()
 
-	return [noiseLeft, noiseRight]
+	return noise
 
 # generates multiple tracks and plays them all asynchronously
 def generate_chord_track(wave_table : PyoTableObject, envelope_table : PyoTableObject, 
@@ -166,13 +166,13 @@ More:
 		- Note length (rest vs hold)
 			???
 		- Vibrato
-			???
+			??? apply an oscillator and feed that into frequency
 		- Pitch bend
-			???
+			??? interpolate between frequencies
 		- EQ shift over time
 			maybe combine with volume???
 		- Tempo
-			???
+			??? this is tough because dur is calculated at beginning
 		- Microtonal pitches
 			???
 		- Tone shift over time

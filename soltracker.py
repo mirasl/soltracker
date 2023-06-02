@@ -90,15 +90,15 @@ class Soltracker:
 		return pitches
 
 	# Changes midi pitches to piano frequencies
-	def to_frequency(self, pits : list, addend : int = 50):
+	def to_frequency(self, pits : list, addend : int = 50, modSignal : PyoObject = Linseg([(0,0)])):
 		for i in range(len(pits)):
 			if pits[i] != None:
-				pits[i] = self.frequencies[pits[i] + addend]
+				pits[i] = self.frequencies[pits[i] + addend] * modSignal
 		return pits
 
 	# "solfege to hertz" (nonverbose helper method)
-	def s2h(self, solfege_string : str, addend : int = 50):
-		return self.to_frequency(self.parse_solfege(solfege_string), addend)
+	def s2h(self, solfege_string : str, addend : int = 50, modSignal : PyoObject = Linseg([(0,0)])):
+		return self.to_frequency(self.parse_solfege(solfege_string), addend, modSignal)
 
 	# Generates a sequence of note durations based on pitches
 	def generate_sequence(self, notes : list, dur : float):
@@ -215,7 +215,7 @@ class Soltracker:
 			table of frequencies
 			??? also include note length vs rest ???
 
-		- Envelope
+		- Envelope DONE
 			standard ADSR table
 
 		- MacroDynamics DONE
@@ -224,19 +224,12 @@ class Soltracker:
 		- Pan DONE
 			control signal representing percentage, from 0.0 to 1.0, of the signal gotten by the LEFT
 			channel. Ex. 0.5 => even panning, 0.3 => mostly right, 1.0 => completely left
-
-		- PitchVibrato
-			control signal representing magnitude of frequency alteration from vibrato
-			(will need to find a way to turn this into an LFO to add to the frequency)
-		
-		- VolumeVibrato
-			control signal representing magnitude of amplitude alteration from vibrato
-			(will need to find a way to turn this into an LFO to add to the mul)
 		
 		- PitchModulation
-			control signal representing frequency deviation from given note. Can be used for PITCH
+			control signal representing frequency scaling of given note. Can be used for PITCH
 			BENDS, or for MICROTONAL pitches
-			Can also achieve PITCH VIBRATO by applying an LFO
+			Multiplied by frequency (value of 1 results in normal sound)
+			Can also achieve PITCH VIBRATO by applying an LFO, should find an easy way to do this.
 
 		
 

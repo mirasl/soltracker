@@ -16,7 +16,8 @@ class Soltracker:
 	
 	print(spb)
 	
-	s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
+	#s = Server(sr=44100, nchnls=2, buffersize=512, duplex=2, audio='jack').boot()
+	s = Server(duplex=0).boot()
 
 	frequencies = [
 		16.35, 	17.32, 	18.35, 	19.45, 	20.60, 	21.83, 	23.12, 	24.50, 	25.96, 	27.50, 	29.14, 	30.87,
@@ -90,14 +91,14 @@ class Soltracker:
 		return pitches
 
 	# Changes midi pitches to piano frequencies
-	def to_frequency(self, pits : list, addend : int = 50, modSignal : PyoObject = Linseg([(0,0)])):
+	def to_frequency(self, pits : list, addend : int = 50, modSignal : PyoObject = Linseg([(0,1)]).play()):
 		for i in range(len(pits)):
 			if pits[i] != None:
 				pits[i] = self.frequencies[pits[i] + addend] * modSignal
 		return pits
 
 	# "solfege to hertz" (nonverbose helper method)
-	def s2h(self, solfege_string : str, addend : int = 50, modSignal : PyoObject = Linseg([(0,0)])):
+	def s2h(self, solfege_string : str, addend : int = 50, modSignal : PyoObject = Linseg([(0,1)]).play()):
 		return self.to_frequency(self.parse_solfege(solfege_string), addend, modSignal)
 
 	# Generates a sequence of note durations based on pitches
@@ -129,7 +130,7 @@ class Soltracker:
 		envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
 		macro_envelope = LinTable()
 
-		osc = OscLoop(table=[wave_table, wave_table], freq=this_pitch, mul=envelope, feedback=feedback).out([0,1])
+		osc = OscLoop(table=[wave_table, wave_table], freq=this_pitch, mul=envelope, feedback=feedback)
 		#oscRight = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback)
 
 		return osc
@@ -144,7 +145,7 @@ class Soltracker:
 
 		envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
 
-		noise = Noise(mul=[envelope, envelope]).out()
+		noise = Noise(mul=[envelope, envelope])
 
 		return noise
 
@@ -155,6 +156,7 @@ class Soltracker:
 		for frequencies in frequency_list:
 			tracks.append(self.generate_track(wave_table, envelope_table, frequencies,
 					div, mul, feedback))
+		# tracks = self.generate_noise_track(wave_table, envelope_table, frequency_list, div, mul, feedback)
 		return tracks
 
 	"""
@@ -210,6 +212,8 @@ class Soltracker:
 	ALTERNATE PLAN:
 	- Create header
 		- bpm
+	- Create tracks
+		- Wavetables
 	- Create automation components
 		- Pitch
 			table of frequencies
@@ -225,11 +229,14 @@ class Soltracker:
 			control signal representing percentage, from 0.0 to 1.0, of the signal gotten by the LEFT
 			channel. Ex. 0.5 => even panning, 0.3 => mostly right, 1.0 => completely left
 		
-		- PitchModulation
+		- PitchModulation DONE
 			control signal representing frequency scaling of given note. Can be used for PITCH
 			BENDS, or for MICROTONAL pitches
 			Multiplied by frequency (value of 1 results in normal sound)
 			Can also achieve PITCH VIBRATO by applying an LFO, should find an easy way to do this.
+	
+	- Create master
+		- specifies the order of tracks and when to play them
 
 		
 

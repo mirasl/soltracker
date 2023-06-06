@@ -9,12 +9,19 @@ cos_table = CosTable()
 triangle_table = TriangleTable()
 
 piano_envelope = CosTable([(0,0),(50,1),(4000,.5),(8192,0)])
-spizazz_envelope = LinTable([(0,0),(10,1),(8000,0.1),(8192,0)])
+spizazz_envelope = LinTable([(0,0),(10,1),(8000,0.4),(8192,0)])
 cross_stick_envelope = LinTable([(0,1),(10,0.2),(8192,0)])
 
 spizazz_volume = Linseg([(0, 0.01), (sol.spb * 16, 0.1)]).play()
 
-spizazz_modulation = Linseg([(0,1), (sol.spb * 16, 2)]).play()
+#spizazz_modulation = Linseg([(0,1), (sol.spb * 16, 2)]).play()
+spizazz_modulation = Linseg([(0,1)]).play()
+ladida_vibrato_magnitude = Linseg([(0, 0.00), (sol.spb * 16, 0.06)]).play()
+ladida_vibrato = LFO(freq=10, mul=ladida_vibrato_magnitude, add=1, type=7)
+ladida_modulation = Linseg([(0,1)]).play()
+ladida_modulation += ladida_vibrato
+
+eq_freq_shift = Linseg([(0,100), (sol.spb * 15, 10000), (sol.spb * 16, 0)]).play()
 
 # piano_track = generate_track(
 # 	wave_table=piano_table,
@@ -36,8 +43,16 @@ spizazz_track = sol.generate_chord_track(
 	],
 	div = 6,
 	mul=[spizazz_volume, spizazz_volume],
-	feedback= 1 - spizazz_volume*10
+	feedback= 1 - (spizazz_volume*10)**0.5
 )
+# for track in spizazz_track:
+# 	track.out()
+track0 = EQ(spizazz_track[0], eq_freq_shift, 100, -100, 0).out()
+track1 = EQ(spizazz_track[1], eq_freq_shift, 100, -100, 0).out()
+track2 = EQ(spizazz_track[2], eq_freq_shift, 100, -100, 0).out()
+track3 = EQ(spizazz_track[3], eq_freq_shift, 100, -100, 0).out()
+track4 = EQ(spizazz_track[4], eq_freq_shift, 100, -100, 0).out()
+	#track.out()
 
 # cross_stick_track = sol.generate_noise_track(
 # 	pattern=sol.parse_solfege(
@@ -52,12 +67,9 @@ spizazz_track = sol.generate_chord_track(
 # )
 
 # ladida = sol.generate_track(
-# 	wave_table=HannTable(),
-# 	envelope_table=spizazz_envelope,
-# 	frequencies=sol.s2h("- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 			"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 			"do do do di di di re re re ri ri ri mi mi mi fa fa fa fi fi fi so so so " +
-# 			"le le la la te te ti ti ^do ^do ^di ^di ^re ^ri ^mi ^fa ^fi ^so ^si ^la ^li ^ti ^do ^di ", 50),
+# 	wave_table=SquareTable(),
+# 	envelope_table=LinTable([(0,1),(8191,1)]),
+# 	frequencies=sol.s2h("so - - do - so fa me re - fa - mi - - - - - do - - re me fa ", 25 + 24, ladida_modulation),
 # 	div=6,
 # 	mul=[spizazz_volume, spizazz_volume]
 # )

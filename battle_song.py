@@ -1,4 +1,30 @@
 from soltracker import *
+# import matplotlib.pyplot as plt
+# import numpy as np
+# import pylustrator
+
+# pylustrator.start()
+
+# plt.style.use('_mpl-gallery')
+
+# # make the data
+# np.random.seed(3)
+# x = 4 + np.random.normal(0, 2, 24)
+# y = 4 + np.random.normal(0, 2, len(x))
+# # size and color:
+# sizes = np.random.uniform(15, 80, len(x))
+# colors = np.random.uniform(15, 80, len(x))
+
+# # plot
+# fig, ax = plt.subplots()
+
+# ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100)
+
+# ax.set(xlim=(0, 8), xticks=np.arange(1,8),
+# 		ylim=(0, 8), yticks=np.arange(1,8))
+	
+# plt.ion = True
+# plt.show()
 
 #s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
 
@@ -32,19 +58,55 @@ eq_freq_shift = Linseg([(0,100), (sol.spb * 15, 10000), (sol.spb * 16, 0)]).play
 # )
 
 spizazz_track = sol.generate_chord_track(
-	wave_table=cos_table,
+	wave_table=piano_table,
 	envelope_table=spizazz_envelope,
 	frequency_list=[
-		sol.s2h("so - - so - so fa - fa - fa - mi - - mi - mi mi - mi - mi - ", 25 + 24, spizazz_modulation),
-		sol.s2h("do - - do - do re - re - re - do - - do - do do - do - do - ", 25 + 24, spizazz_modulation),
-		sol.s2h("le - - le - le te - te - te - ti - - ti - ti ti - ti - ti - ", 25 + 12, spizazz_modulation),
-		sol.s2h("me - - me - me fa - fa - fa - so - - so - so so - so - so - ", 25 + 12, spizazz_modulation),
-		sol.s2h("fa - - fa - fa so - so - so - do - - do - do do - do - do - ", 25, spizazz_modulation),
+		sol.s2h("so - - so - so fa - fa - fa - mi - - mi - mi mi - mi - mi - " + "so - - so - so fa - fa - fa - mi - - mi - mi mi - mi - mi - " + "so - - so - so fa - fa - fa - mi - - mi - mi mi - mi - mi - " + "so - - so - so fa - fa - fa - mi - - mi - mi mi - mi - mi - " + "so - - so - so fa - fa - fa - mi - - mi - mi mi - mi - mi - " + "so - - so - so fa - fa - fa - mi - - mi - mi mi - mi - mi - " + "so - - so - so fa - fa - fa - me - - me - me re - re - re - "    + "so - - so - so so - so - so - fa - - fa - fa fa - fa - fa - ", 25 + 24, spizazz_modulation),
+		sol.s2h("do - - do - do re - re - re - do - - do - do do - do - do - " + "do - - do - do re - re - re - do - - do - do do - do - do - " + "do - - do - do re - re - re - do - - do - do do - do - do - " + "do - - do - do re - re - re - do - - do - do do - do - do - " + "do - - do - do re - re - re - do - - do - do do - do - do - " + "do - - do - do re - re - re - do - - do - do do - do - do - " + "do - - do - do re - re - re - do - - do - do /te - /te - /te - " + "re - - re - re re - re - re - do - - do - do do - do - do - ", 25 + 24, spizazz_modulation),
+		sol.s2h("le - - le - le te - te - te - ti - - ti - ti ti - ti - ti - " + "le - - le - le te - te - te - ti - - ti - ti ti - ti - ti - " + "le - - le - le te - te - te - ti - - ti - ti ti - ti - ti - " + "le - - le - le te - te - te - ti - - ti - ti ti - ti - ti - " + "le - - le - le te - te - te - ti - - ti - ti ti - ti - ti - " + "le - - le - le te - te - te - ti - - ti - ti ti - ti - ti - " + "le - - le - le te - te - te - le - - le - le so - so - so - "    + "do - - do - do /ti - /ti - /ti - /te - - /te - /te /la - /la - /la - ", 25 + 12, spizazz_modulation),
+		sol.s2h("me - - me - me fa - fa - fa - so - - so - so so - so - so - " + "me - - me - me fa - fa - fa - so - - so - so so - so - so - " + "me - - me - me fa - fa - fa - so - - so - so so - so - so - " + "me - - me - me fa - fa - fa - so - - so - so so - so - so - " + "me - - me - me fa - fa - fa - so - - so - so so - so - so - " + "me - - me - me fa - fa - fa - so - - so - so so - so - so - " + "me - - me - me fa - fa - fa - fa - - fa - fa fa - fa - fa - "    + "- - - - - - - - - - - - - - - - - - - - - - - - ", 25 + 12, spizazz_modulation),
+		sol.s2h("fa - - fa - fa so - so - so - do - - do - do do - do - do - " + "fa - - fa - fa so - so - so - do - - do - do do - do - do - " + "fa - - fa - fa so - so - so - do - - do - do do - do - do - " + "fa - - fa - fa so - so - so - do - - do - do do - do - do - " + "fa - - fa - fa so - so - so - do - - do - do do - do - do - " + "fa - - fa - fa so - so - so - do - - do - do do - do - do - " + "fa - - fa - fa so - so - so - le - - le - le te - te - te - "    + "so - - so - so so - so - so - fa - - fa - fa fa - fa - fa - ", 25, spizazz_modulation),
 	],
 	div = 6,
 	mul=[spizazz_volume, spizazz_volume],
 	feedback= 1 - (spizazz_volume*10)**0.5
 )
+
+# melody_track = sol.generate_track(
+# 	wave_table=cos_table,
+# 	envelope_table=spizazz_envelope,
+# 	frequencies=sol.s2h(
+# 		"- - - - - - - - - - - - - - - - - - - - - - - - " +
+# 		"- - - - - - - - - - - - - - - - - - - - - - - - " +
+# 		"- - - - - - - - - - - - - - - - - - - - - - - - " +
+# 		"- - - - - - - - - - - - - - - - - - - - do re me fa " +
+# 		"so - - do - so fa me re - fa - mi - - - - - do - - re me fa " +
+# 		"so - - do - so fa - te - fa - so - - - - - - - do re me fa " +
+# 		"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
+# 		"do - - - - - - /ti - - - - - /te - - - - - /la - - - - - "
+# 		, 49),
+# 	div = 6,
+# 	mul=[0.5,0.5]
+# ).out()
+
+solfege = ("do - - - - - - - - - - - - - - - - - - - - - - - " +
+	"- - - - - - - - - - - - - - - - - - - - - - - - " +
+	"- - - - - - - - - - - - - - - - - - - - - - - - " +
+	"- - - - - - - - - - - - - - - - - - - - do re me fa " +
+	"so - - do - so fa me re - fa - mi - - - - - do - - re me fa " +
+	"so - - do - so fa - te - fa - so - - - - - - - do re me fa " +
+	"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
+	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
+
+melody_track = sol.generate_chord_track(
+	wave_table=cos_table,
+	envelope_table=spizazz_envelope,
+	frequency_list=[sol.s2h(solfege, 49)],
+	div = 6,
+	mul=[0.1,0.1]
+)[0].out()
+
+
 # for track in spizazz_track:
 # 	track.out()
 track0 = EQ(spizazz_track[0], eq_freq_shift, 100, -100, 0).out()
@@ -54,17 +116,21 @@ track3 = EQ(spizazz_track[3], eq_freq_shift, 100, -100, 0).out()
 track4 = EQ(spizazz_track[4], eq_freq_shift, 100, -100, 0).out()
 	#track.out()
 
-# cross_stick_track = sol.generate_noise_track(
-# 	pattern=sol.parse_solfege(
-# 			"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 			"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 			"do do do di di di re re re ri ri ri mi mi mi fa fa fa fi fi fi so so so " +
-# 			"le le la la te te ti ti ^do ^do ^di ^di ^re ^ri ^mi ^fa ^fi ^so ^si ^la ^li ^ti ^do ^di "
-# 	),
-# 	div=6,
-# 	envelope_table=cross_stick_envelope,
-# 	mul=[spizazz_volume, spizazz_volume]
-# )
+cross_stick_track = sol.generate_noise_track(
+	pattern=sol.parse_solfege(
+		"- - - - - - - - - - - - - - - - - - - - - - - - " +
+		"- - - - - - - - - - - - - - - - - - - - - - - - " +
+		"do do do di di di re re re ri ri ri mi mi mi fa fa fa fi fi fi so so so " +
+		"le le la la te te ti ti ^do ^do ^di ^di ^re ^ri ^mi ^fa ^fi ^so ^si ^la ^li ^ti ^do ^di " +
+		"do - do do - do do - do - do - do - do do - do do - do - do - " +
+		"do - do do - do do - do - do - do - do do - do do - do - do - " +
+		"do - do do - do do - do - do - do - do do - do do - do - do - " +
+		"do - do do - do do - do - do - do - do do - do do - do - do - "
+	),
+	div=6,
+	envelope_table=cross_stick_envelope,
+	mul=[spizazz_volume, spizazz_volume]
+).out()
 
 # ladida = sol.generate_track(
 # 	wave_table=SquareTable(),
@@ -74,6 +140,6 @@ track4 = EQ(spizazz_track[4], eq_freq_shift, 100, -100, 0).out()
 # 	mul=[spizazz_volume, spizazz_volume]
 # )
 
-scope = Scope(spizazz_track)
+# scope = Scope(spizazz_track)
 
 sol.s.gui(locals())

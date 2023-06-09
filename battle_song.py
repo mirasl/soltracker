@@ -89,17 +89,17 @@ spizazz_track = sol.generate_chord_track(
 # 	mul=[0.5,0.5]
 # ).out()
 
-solfege = ("do - - - - - - - - - - - - - - - - - - - - - - - " +
+solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
 	"- - - - - - - - - - - - - - - - - - - - do re me fa " +
-	"so - - do - so fa me re - fa - mi - - - - - do - - re me fa " +
-	"so - - do - so fa - te - fa - so - - - - - - - do re me fa " +
+	"so - - do - so fa me re - fa - mi - - - 0 - do - - re me fa " +
+	"so - - do - so fa - te - fa - so - - - - - 0 - do re me fa " +
 	"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
 	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
 
 melody_track = sol.generate_chord_track(
-	wave_table=cos_table,
+	wave_table=HarmTable([1, 1/2, -1/3, -1/4, 1/5, 1/6, -1/7, -1/8, 1/9, 1/10]),
 	envelope_table=spizazz_envelope,
 	frequency_list=[sol.s2h(solfege, 49)],
 	div = 6,

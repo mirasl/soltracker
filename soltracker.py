@@ -32,6 +32,7 @@ class Soltracker:
 	]
 
 	solfege = {
+		"0" : -111,
 		"do" : 1,
 		"di" : 2,
 		"ra" : 2,
@@ -93,7 +94,9 @@ class Soltracker:
 	# Changes midi pitches to piano frequencies
 	def to_frequency(self, pits : list, addend : int = 50, modSignal : PyoObject = Linseg([(0,1)]).play()):
 		for i in range(len(pits)):
-			if pits[i] != None:
+			if pits[i] == -111:
+				pits[i] = 0
+			elif pits[i] != None:
 				pits[i] = self.frequencies[pits[i] + addend] * modSignal
 		return pits
 

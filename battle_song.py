@@ -37,6 +37,7 @@ triangle_table = TriangleTable()
 piano_envelope = CosTable([(0,0),(50,1),(4000,.5),(8192,0)])
 spizazz_envelope = LinTable([(0,0),(10,1),(8000,0.4),(8192,0)])
 cross_stick_envelope = LinTable([(0,1),(10,0.2),(8192,0)])
+base_envelope = LinTable([(0,0), (400, 1), (4000, 0.5), (8192, 0)])
 
 spizazz_volume = Linseg([(0, 0.01), (sol.spb * 16, 0.1)]).play()
 
@@ -47,7 +48,7 @@ ladida_vibrato = LFO(freq=10, mul=ladida_vibrato_magnitude, add=1, type=7)
 ladida_modulation = Linseg([(0,1)]).play()
 ladida_modulation += ladida_vibrato
 
-eq_freq_shift = Linseg([(0,100), (sol.spb * 15, 10000), (sol.spb * 16, 0)]).play()
+eq_freq_shift = Linseg([(0,100), (sol.spb * 16, 5000)]).play()
 
 # piano_track = generate_track(
 # 	wave_table=piano_table,
@@ -98,13 +99,13 @@ solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
 	"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
 	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
 
-melody_track = sol.generate_chord_track(
-	wave_table=HarmTable([1, 1/2, -1/3, -1/4, 1/5, 1/6, -1/7, -1/8, 1/9, 1/10]),
-	envelope_table=spizazz_envelope,
-	frequency_list=[sol.s2h(solfege, 49)],
+melody_track = sol.generate_track(
+	wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
+	envelope_table=LinTable([(0,1), (8192,1)]),
+	frequencies=sol.s2h(solfege, 49),
 	div = 6,
 	mul=[0.1,0.1]
-)[0].out()
+).out()
 
 
 # for track in spizazz_track:
@@ -141,5 +142,8 @@ cross_stick_track = sol.generate_noise_track(
 # )
 
 # scope = Scope(spizazz_track)
+scope1 = Scope(melody_track)
+scope2 = Scope(spizazz_track)
+scope3 = Scope(cross_stick_track)
 
 sol.s.gui(locals())

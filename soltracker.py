@@ -106,7 +106,6 @@ class Soltracker:
 
 	# Generates a sequence of note durations based on pitches
 	def generate_sequence(self, notes : list, dur : float):
-		print(notes)
 		seq = [dur] * len(notes)
 		notesIndex = 1
 		seqIndex = 1
@@ -117,7 +116,6 @@ class Soltracker:
 			else:
 				seqIndex += 1
 			notesIndex += 1
-		print(seq)
 		return seq
 
 	# Generates a track and plays it asynchronously, returns 2-index list of osc for each channel (left

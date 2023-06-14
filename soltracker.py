@@ -9,6 +9,8 @@ import random
 	# slider.Show()
 	# # app.MainLoop()
 class Soltracker:
+	s = Server(duplex=0).boot()
+
 	spb = 0
 
 	def __init__(self, bpm) -> None:
@@ -17,7 +19,6 @@ class Soltracker:
 	print(spb)
 	
 	#s = Server(sr=44100, nchnls=2, buffersize=512, duplex=2, audio='jack').boot()
-	s = Server(duplex=0).boot()
 
 	frequencies = [
 		16.35, 	17.32, 	18.35, 	19.45, 	20.60, 	21.83, 	23.12, 	24.50, 	25.96, 	27.50, 	29.14, 	30.87,

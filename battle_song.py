@@ -1,34 +1,47 @@
 from soltracker import *
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import pylustrator
-
-# pylustrator.start()
-
-# plt.style.use('_mpl-gallery')
-
-# # make the data
-# np.random.seed(3)
-# x = 4 + np.random.normal(0, 2, 24)
-# y = 4 + np.random.normal(0, 2, len(x))
-# # size and color:
-# sizes = np.random.uniform(15, 80, len(x))
-# colors = np.random.uniform(15, 80, len(x))
-
-# # plot
-# fig, ax = plt.subplots()
-
-# ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100)
-
-# ax.set(xlim=(0, 8), xticks=np.arange(1,8),
-# 		ylim=(0, 8), yticks=np.arange(1,8))
-	
-# plt.ion = True
-# plt.show()
-
-#s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1, audio="jack").boot()
+import wx
 
 sol = Soltracker(75)
+
+app = wx.App()
+frame = wx.Frame(None, title="Hello World")
+frame.Show()
+grapher = PyoGuiGrapher(parent=frame, init=[(0,0), (8192,1)])
+grapher.Show()
+slider = PyoGuiControlSlider(parent=frame, minvalue=0, maxvalue=1)
+slider.Show()
+
+def button_clicked(self):
+
+
+	sol.s.gui(locals())
+
+button = wx.Button(parent=frame)
+button.Bind(wx.EVT_BUTTON, button_clicked)
+
+# solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
+# 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
+# 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
+# 	"- - - - - - - - - - - - - - - - - - - - do re me fa " +
+# 	"so - - do - so fa me re - fa - mi - - - 0 - do - - re me fa " +
+# 	"so - - do - so fa - te - fa - so - - - - - 0 - do re me fa " +
+# 	"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
+# 	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
+
+# melody_track = sol.generate_track(
+# 	wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
+# 	envelope_table=CosTable([(0,0),(50,1),(4000,.5),(8192,0)]),#grapher.getPoints()),
+# 	frequencies=sol.s2h(solfege, 49),
+# 	div = 6,
+# 	mul=[0.1,0.1]
+# ).out()
+
+# sol.s.gui(locals())
+
+#app.MainLoop()
+
+
+
 
 piano_table = HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015])
 cos_table = CosTable()
@@ -101,12 +114,13 @@ solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
 
 melody_track = sol.generate_track(
 	wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
-	envelope_table=LinTable([(0,1), (8192,1)]),
+	envelope_table=LinTable(grapher.getPoints()),
 	frequencies=sol.s2h(solfege, 49),
 	div = 6,
 	mul=[0.1,0.1]
 ).out()
 
+print(grapher.getPoints())
 
 # for track in spizazz_track:
 # 	track.out()
@@ -142,8 +156,6 @@ cross_stick_track = sol.generate_noise_track(
 # )
 
 # scope = Scope(spizazz_track)
-scope1 = Scope(melody_track)
-scope2 = Scope(spizazz_track)
-scope3 = Scope(cross_stick_track)
 
-sol.s.gui(locals())
+app.MainLoop()
+# sol.s.gui(locals())

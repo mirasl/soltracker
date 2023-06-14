@@ -6,14 +6,40 @@ sol = Soltracker(75)
 app = wx.App()
 frame = wx.Frame(None, title="Hello World")
 frame.Show()
-grapher = PyoGuiGrapher(parent=frame, init=[(0,0), (8192,1)])
+grapher = PyoGuiGrapher(parent=frame)
 grapher.Show()
 slider = PyoGuiControlSlider(parent=frame, minvalue=0, maxvalue=1)
 slider.Show()
 
+def multiply_table(table : list, coefficient : tuple):
+	new_table = []
+	for point in table:
+		new_table.append((int(point[0] * coefficient[0]), point[1] * coefficient[1]))
+	return new_table
+
 def button_clicked(self):
+	table = multiply_table(grapher.getPoints(), (8191, 1))
+	print(table)
+	print(LinTable(table))
 
+	solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
+		"- - - - - - - - - - - - - - - - - - - - - - - - " +
+		"- - - - - - - - - - - - - - - - - - - - - - - - " +
+		"- - - - - - - - - - - - - - - - - - - - do re me fa " +
+		"so - - do - so fa me re - fa - mi - - - 0 - do - - re me fa " +
+		"so - - do - so fa - te - fa - so - - - - - 0 - do re me fa " +
+		"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
+		"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
 
+	melody_track = sol.generate_track(
+		wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
+		envelope_table=LinTable(table),
+		frequencies=sol.s2h(solfege, 49),
+		div = 6,
+		mul=[0.1,0.1]
+	).out()
+
+	print("hi")
 	sol.s.gui(locals())
 
 button = wx.Button(parent=frame)
@@ -103,24 +129,8 @@ spizazz_track = sol.generate_chord_track(
 # 	mul=[0.5,0.5]
 # ).out()
 
-solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
-	"- - - - - - - - - - - - - - - - - - - - - - - - " +
-	"- - - - - - - - - - - - - - - - - - - - - - - - " +
-	"- - - - - - - - - - - - - - - - - - - - do re me fa " +
-	"so - - do - so fa me re - fa - mi - - - 0 - do - - re me fa " +
-	"so - - do - so fa - te - fa - so - - - - - 0 - do re me fa " +
-	"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
-	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
 
-melody_track = sol.generate_track(
-	wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
-	envelope_table=LinTable(grapher.getPoints()),
-	frequencies=sol.s2h(solfege, 49),
-	div = 6,
-	mul=[0.1,0.1]
-).out()
 
-print(grapher.getPoints())
 
 # for track in spizazz_track:
 # 	track.out()

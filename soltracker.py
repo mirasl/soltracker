@@ -132,7 +132,6 @@ class Soltracker:
 		this_duration = Iter(sequence.mix(1), choice=durations)
 
 		envelope = TrigEnv(sequence, table=envelope_table, dur=this_duration, mul=mul)
-		macro_envelope = LinTable()
 
 		osc = OscLoop(table=[wave_table, wave_table], freq=this_pitch, mul=envelope, feedback=feedback)
 		#oscRight = OscLoop(table=wave_table, freq=this_pitch, mul=envelope, feedback=feedback)

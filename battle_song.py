@@ -13,10 +13,10 @@ slider = PyoGuiControlSlider(parent=frame, minvalue=0, maxvalue=1)
 slider.Show()
 
 
-def create_solfege_table(parent, num_cells : int, pos : tuple, cell_size : tuple = (50, 25)):
+def create_solfege_table(parent, num_cells : int, pos : tuple = (0, 500), cell_size : tuple = (50, 25)):
 	solfege_table = []
 	for i in range(num_cells):
-		solfege_table.append(wx.TextCtrl(parent=parent, pos=(cell_size[0]*i, cell_size[1]), 
+		solfege_table.append(wx.TextCtrl(parent=parent, pos=(pos[0] + cell_size[0]*i, pos[1]), 
 				size=cell_size))
 		solfege_table[i].Show()
 	return solfege_table
@@ -26,7 +26,9 @@ def solfege_table_to_string(solfege_table : list):
 	solfege = ""
 	for cell in solfege_table:
 		cell_value = cell.GetValue()
-		if cell_value != "":
+		if cell_value == "":
+			solfege += "- "
+		else:
 			solfege += cell_value + " "
 	return solfege
 

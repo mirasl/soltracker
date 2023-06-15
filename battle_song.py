@@ -1,5 +1,6 @@
 from soltracker import *
 import wx
+import wx.grid as gridlib
 
 sol = Soltracker(75)
 
@@ -10,6 +11,26 @@ grapher = PyoGuiGrapher(parent=frame)
 grapher.Show()
 slider = PyoGuiControlSlider(parent=frame, minvalue=0, maxvalue=1)
 slider.Show()
+
+def create_solfege_table(parent, num_cells : int, pos : tuple, cell_size : tuple = (50, 25)):
+	solfege_table = []
+	for i in range(num_cells):
+		solfege_table.append(wx.TextCtrl(parent=parent, pos=(cell_size[0]*i, cell_size[1]), 
+				size=cell_size).Show())
+	return solfege_table
+
+solfege_table_ui = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
+
+# solfege_text = wx.TextCtrl(parent=frame, pos=(0, 200), size=(200, 25)).Show()
+# solfege_text2 = wx.TextCtrl(parent=frame, pos=(200, 200), size=(200, 25)).Show()
+
+# solfege_table = gridlib.Grid(frame)
+# solfege_table.CreateGrid(12, 8)
+# solfege_table.SetCellValue(0, 0, "hi")
+# solfege_table.Position = (300, 200)
+# solfege_table.Show()
+# grid = gridlib.GridStringTable(10, 10)
+# solfege_table = gridlib.Grid(parent=frame).Show()
 
 def multiply_table(table : list, coefficient : tuple):
 	new_table = []

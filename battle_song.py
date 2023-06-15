@@ -21,17 +21,6 @@ def create_solfege_table(parent, num_cells : int, pos : tuple, cell_size : tuple
 
 solfege_table_ui = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
 
-# solfege_text = wx.TextCtrl(parent=frame, pos=(0, 200), size=(200, 25)).Show()
-# solfege_text2 = wx.TextCtrl(parent=frame, pos=(200, 200), size=(200, 25)).Show()
-
-# solfege_table = gridlib.Grid(frame)
-# solfege_table.CreateGrid(12, 8)
-# solfege_table.SetCellValue(0, 0, "hi")
-# solfege_table.Position = (300, 200)
-# solfege_table.Show()
-# grid = gridlib.GridStringTable(10, 10)
-# solfege_table = gridlib.Grid(parent=frame).Show()
-
 def multiply_table(table : list, coefficient : tuple):
 	new_table = []
 	for point in table:
@@ -66,30 +55,6 @@ def button_clicked(self):
 button = wx.Button(parent=frame)
 button.Bind(wx.EVT_BUTTON, button_clicked)
 
-# solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
-# 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 	"- - - - - - - - - - - - - - - - - - - - do re me fa " +
-# 	"so - - do - so fa me re - fa - mi - - - 0 - do - - re me fa " +
-# 	"so - - do - so fa - te - fa - so - - - - - 0 - do re me fa " +
-# 	"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
-# 	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
-
-# melody_track = sol.generate_track(
-# 	wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
-# 	envelope_table=CosTable([(0,0),(50,1),(4000,.5),(8192,0)]),#grapher.getPoints()),
-# 	frequencies=sol.s2h(solfege, 49),
-# 	div = 6,
-# 	mul=[0.1,0.1]
-# ).out()
-
-# sol.s.gui(locals())
-
-#app.MainLoop()
-
-
-
-
 piano_table = HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015])
 cos_table = CosTable()
 triangle_table = TriangleTable()
@@ -110,14 +75,6 @@ ladida_modulation += ladida_vibrato
 
 eq_freq_shift = Linseg([(0,100), (sol.spb * 16, 5000)]).play()
 
-# piano_track = generate_track(
-# 	wave_table=piano_table,
-# 	envelope_table=piano_envelope,
-# 	frequencies=s2h("do do so so la la so - fa fa mi mi re re do - so so fa fa mi mi re - so so fa fa mi mi re - ", 50),
-# 	base_duration=0.5,
-# 	mul=[0.1,0.1]
-# )
-
 spizazz_track = sol.generate_chord_track(
 	wave_table=piano_table,
 	envelope_table=spizazz_envelope,
@@ -133,34 +90,11 @@ spizazz_track = sol.generate_chord_track(
 	feedback= 1 - (spizazz_volume*10)**0.5
 )
 
-# melody_track = sol.generate_track(
-# 	wave_table=cos_table,
-# 	envelope_table=spizazz_envelope,
-# 	frequencies=sol.s2h(
-# 		"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 		"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 		"- - - - - - - - - - - - - - - - - - - - - - - - " +
-# 		"- - - - - - - - - - - - - - - - - - - - do re me fa " +
-# 		"so - - do - so fa me re - fa - mi - - - - - do - - re me fa " +
-# 		"so - - do - so fa - te - fa - so - - - - - - - do re me fa " +
-# 		"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
-# 		"do - - - - - - /ti - - - - - /te - - - - - /la - - - - - "
-# 		, 49),
-# 	div = 6,
-# 	mul=[0.5,0.5]
-# ).out()
-
-
-
-
-# for track in spizazz_track:
-# 	track.out()
 track0 = EQ(spizazz_track[0], eq_freq_shift, 100, -100, 0).out()
 track1 = EQ(spizazz_track[1], eq_freq_shift, 100, -100, 0).out()
 track2 = EQ(spizazz_track[2], eq_freq_shift, 100, -100, 0).out()
 track3 = EQ(spizazz_track[3], eq_freq_shift, 100, -100, 0).out()
 track4 = EQ(spizazz_track[4], eq_freq_shift, 100, -100, 0).out()
-	#track.out()
 
 cross_stick_track = sol.generate_noise_track(
 	pattern=sol.parse_solfege(
@@ -178,15 +112,4 @@ cross_stick_track = sol.generate_noise_track(
 	mul=[spizazz_volume, spizazz_volume]
 ).out()
 
-# ladida = sol.generate_track(
-# 	wave_table=SquareTable(),
-# 	envelope_table=LinTable([(0,1),(8191,1)]),
-# 	frequencies=sol.s2h("so - - do - so fa me re - fa - mi - - - - - do - - re me fa ", 25 + 24, ladida_modulation),
-# 	div=6,
-# 	mul=[spizazz_volume, spizazz_volume]
-# )
-
-# scope = Scope(spizazz_track)
-
 app.MainLoop()
-# sol.s.gui(locals())

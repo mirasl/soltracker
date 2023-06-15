@@ -12,14 +12,24 @@ grapher.Show()
 slider = PyoGuiControlSlider(parent=frame, minvalue=0, maxvalue=1)
 slider.Show()
 
+
 def create_solfege_table(parent, num_cells : int, pos : tuple, cell_size : tuple = (50, 25)):
 	solfege_table = []
 	for i in range(num_cells):
 		solfege_table.append(wx.TextCtrl(parent=parent, pos=(cell_size[0]*i, cell_size[1]), 
-				size=cell_size).Show())
+				size=cell_size))
+		solfege_table[i].Show()
 	return solfege_table
 
-solfege_table_ui = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
+
+def solfege_table_to_string(solfege_table : list):
+	solfege = ""
+	for cell in solfege_table:
+		cell_value = cell.GetValue()
+		if cell_value != "":
+			solfege += cell_value + " "
+	return solfege
+
 
 def multiply_table(table : list, coefficient : tuple):
 	new_table = []
@@ -27,8 +37,14 @@ def multiply_table(table : list, coefficient : tuple):
 		new_table.append((int(point[0] * coefficient[0]), point[1] * coefficient[1]))
 	return new_table
 
-def button_clicked(self):
+
+solfege_table = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
+
+
+def submit_for_playback(self):
 	table = multiply_table(grapher.getPoints(), (8191, 1))
+	solfege = solfege_table_to_string(solfege_table)
+	print(solfege)
 
 	# MUSIC CODE:
 	piano_table = HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015])
@@ -88,14 +104,14 @@ def button_clicked(self):
 		mul=[spizazz_volume, spizazz_volume]
 	).out()
 
-	solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
-		"- - - - - - - - - - - - - - - - - - - - - - - - " +
-		"- - - - - - - - - - - - - - - - - - - - - - - - " +
-		"- - - - - - - - - - - - - - - - - - - - do re me fa " +
-		"so - - do - so fa me re - fa - mi - - - 0 - do - - re me fa " +
-		"so - - do - so fa - te - fa - so - - - - - 0 - do re me fa " +
-		"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
-		"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
+	# solfege = ("0 - - - - - - - - - - - - - - - - - - - - - - - " +
+	# 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
+	# 	"- - - - - - - - - - - - - - - - - - - - - - - - " +
+	# 	"- - - - - - - - - - - - - - - - - - - - do re me fa " +
+	# 	"so - - do - so fa me re - fa - mi - - - 0 - do - - re me fa " +
+	# 	"so - - do - so fa - te - fa - so - - - - - 0 - do re me fa " +
+	# 	"so - - do - so fa me re - fa - me - - /le - me re do /te - re - " +
+	# 	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
 
 	melody_track = sol.generate_track(
 		wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
@@ -109,6 +125,6 @@ def button_clicked(self):
 
 
 button = wx.Button(parent=frame)
-button.Bind(wx.EVT_BUTTON, button_clicked)
+button.Bind(wx.EVT_BUTTON, submit_for_playback)
 
 app.MainLoop()

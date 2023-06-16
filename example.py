@@ -1,15 +1,41 @@
-import pandas
+from pyo import *
 
-spreadsheet = pandas.read_excel("song.xlsx")
+s = Server(duplex=0).boot()
 
-print(spreadsheet)
+table = SquareTable()
+frequency = Linseg([(0, 440), (0.2, 50)]).play()
+sound = OscLoop(table=table, freq=frequency, feedback=0, mul=0.2).out()
 
-# # TRACK 1
-# generate_track(
-# 	frequency=	"	so	-	-	do	-	so	fa	me	re	-	fa	-	mi	-	-	-	-	-	do	-	-	re	me	fa	",
-# 	volume=		"	0.5	-	-	-	-	-	1	0.5	-	-	-	0.5	1	0.5	-	-	-	-	0.5	-	-	-	-	1",
-# 	pan=		"	",
-# 	feedback=	"",
-# 	pitchbend=	""
+noise = BrownNoise(mul=frequency / 440).out()
 
-# )
+# Starts the recording for 10 seconds...
+s.recstart()
+
+s.gui(locals())
+
+
+
+# s.gui(locals())
+
+# s.start()
+
+# time.sleep(0.25)
+
+# s.stop()
+
+# from soltracker import *
+
+# sol = Soltracker(10000)
+
+# freq = []
+# for i in range(100):
+# 	freq.append(130 - i)
+
+# level_up = sol.generate_track(
+# 	wave_table=SquareTable(),
+# 	envelope_table=sol.envelope_library["spizazz"],
+# 	frequencies=freq,
+# 	div=1
+# ).out()
+
+# sol.s.gui(locals())

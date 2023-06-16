@@ -7,8 +7,7 @@ sol = Soltracker(75)
 app = wx.App()
 frame = wx.Frame(None, title="Hello World")
 frame.Show()
-grapher = PyoGuiGrapher(parent=frame)
-grapher.Show()
+
 slider = PyoGuiControlSlider(parent=frame, minvalue=0, maxvalue=1)
 slider.Show()
 
@@ -16,7 +15,7 @@ slider.Show()
 def create_solfege_table(parent, num_cells : int, pos : tuple = (0, 500), cell_size : tuple = (50, 25)):
 	solfege_table = []
 	for i in range(num_cells):
-		solfege_table.append(wx.TextCtrl(parent=parent, pos=(pos[0] + cell_size[0]*i, pos[1]), 
+		solfege_table.append(wx.TextCtrl(parent=parent, pos=(pos[0], pos[1] + cell_size[1]*i), 
 				size=cell_size))
 		solfege_table[i].Show()
 	return solfege_table
@@ -39,13 +38,26 @@ def multiply_table(table : list, coefficient : tuple):
 		new_table.append((int(point[0] * coefficient[0]), point[1] * coefficient[1]))
 	return new_table
 
+def create_ui_track():
+	solfege_table = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
 
-solfege_table = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
+	envelope_table = PyoGuiGrapher(parent=frame)
+	envelope_table.Show()
+
+	wave_table = PyoGuiGrapher(parent=frame, pos=(300, 0), yrange=(-1, 1), mode=1)
+	wave_table.Show()
+
+	
+
+	return [solfege_table, envelope_table, wave_table]
+
+track1 = create_ui_track()
 
 
-def submit_for_playback(self):
-	table = multiply_table(grapher.getPoints(), (8191, 1))
-	solfege = solfege_table_to_string(solfege_table)
+def submit_for_playback(self, track):
+	envelope_table_data = multiply_table(track[1].getPoints(), (8191, 1))
+	solfege = solfege_table_to_string(track[0])
+	wave_table_data = multiply_table(track[2].getPoints(), (8191, 1))
 	print(solfege)
 
 	# MUSIC CODE:
@@ -116,8 +128,8 @@ def submit_for_playback(self):
 	# 	"do - - - - - /ti - - - - - /te - - - - - /la - - - - - ")
 
 	melody_track = sol.generate_track(
-		wave_table=HarmTable([1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9, 0, 1/11, 0, 1/13, 0, 1/15, 0, 1/17, 0, 1/19]),
-		envelope_table=LinTable(table),
+		wave_table=LinTable(wave_table_data),
+		envelope_table=LinTable(envelope_table_data),
 		frequencies=sol.s2h(solfege, 49),
 		div = 6,
 		mul=[0.1,0.1]
@@ -127,6 +139,6 @@ def submit_for_playback(self):
 
 
 button = wx.Button(parent=frame)
-button.Bind(wx.EVT_BUTTON, submit_for_playback)
+button.Bind(wx.EVT_BUTTON, lambda event: submit_for_playback(event, track1))
 
 app.MainLoop()

@@ -38,19 +38,23 @@ def multiply_table(table : list, coefficient : tuple):
 		new_table.append((int(point[0] * coefficient[0]), point[1] * coefficient[1]))
 	return new_table
 
+
 def create_ui_track():
 	solfege_table = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
 
 	envelope_table = PyoGuiGrapher(parent=frame, init=[(0.0,0.0), (0.05,1.0), (0.2,0.5), (0.7,0.5), (1.0,0.0)])
 	envelope_table.Show()
 
-	wave_table = PyoGuiGrapher(parent=frame, pos=(300, 0), yrange=(-1, 1), mode=1)
+	wave_table = PyoGuiGrapher(parent=frame, pos=(300, 0), yrange=(-1, 1), mode=1, init=[(0,0), (0.5,1), (1,0)])
 	wave_table.Show()
 
-	volume_graph = PyoGuiGrapher(parent=frame, pos=(0, 225), size=(50*200, 75), xlen=200, yrange=(1, 10))
+	volume_graph = PyoGuiGrapher(parent=frame, pos=(0, 225), size=(50*200, 75), xlen=200, yrange=(1, 10), init=[(0,0.5), (1,0.5)])
 	volume_graph.Show()
 
-	return [solfege_table, envelope_table, wave_table, volume_graph]
+	pan_graph = PyoGuiGrapher(parent=frame, pos=(0, 300), size=(50*200, 75), xlen=200, init=[(0,0.5), (1,0.5)])
+	pan_graph.Show()
+
+	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph]
 
 track1 = create_ui_track()
 
@@ -61,15 +65,21 @@ def submit_for_playback(self, track):
 	solfege = solfege_table_to_string(track[0])
 	wave_table_data = multiply_table(track[2].getPoints(), (8191, 1))
 
-	#volume_data = multiply_table(track[3].getPoints(), (200, 1))
+	# Volume graph to control signal:
 	volume_data = track[3].getPoints()
 	new_volume_data = []
 	for point in volume_data:
 		new_volume_data.append((point[0] * 200*sol.spb/div, math.log10(9*point[1] + 1)))
-	print(new_volume_data)
 	volume_param = Linseg(new_volume_data).play()
+
+	# Pan graph to control signal:
+	pan_data = track[4].getPoints()
+	new_pan_data = []
+	for point in pan_data:
+		new_pan_data.append((point[0] * 200*sol.spb/div, point[1]))
+	pan_param = Linseg(new_pan_data).play()
 	
-	print(solfege)
+
 
 	# MUSIC CODE:
 	# piano_table = HarmTable([1,0.25,0.1875,0.1,0.09,0.09,0.025,0.015])
@@ -143,7 +153,7 @@ def submit_for_playback(self, track):
 		envelope_table=LinTable(envelope_table_data),
 		frequencies=sol.s2h(solfege, 49),
 		div = div,
-		mul=[volume_param, volume_param]
+		mul=[volume_param * (1 - pan_param), volume_param * pan_param]
 	).out()
 
 	sol.s.gui(locals())

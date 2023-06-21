@@ -54,10 +54,13 @@ def create_ui_track():
 	pan_graph = PyoGuiGrapher(parent=frame, pos=(0, 300), size=(50*200, 75), xlen=200, init=[(0,0.5), (1,0.5)])
 	pan_graph.Show()
 
-	pitch_modulation = PyoGuiGrapher(parent=frame, pos=(0, 375), size=(50*200, 75), xlen=200, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
-	pitch_modulation.Show()
+	pitchmod_graph = PyoGuiGrapher(parent=frame, pos=(0, 375), size=(50*200, 75), xlen=200, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
+	pitchmod_graph.Show()
 
-	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitch_modulation]
+	vibrato_graph = PyoGuiGrapher(parent=frame, pos=(0, 450), size=(50*200, 75), xlen=200, init=[(0,0), (1,0)])
+	vibrato_graph.Show()
+
+	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitchmod_graph, vibrato_graph]
 
 track1 = create_ui_track()
 
@@ -82,12 +85,22 @@ def submit_for_playback(self, track):
 		new_pan_data.append((point[0] * 200*sol.spb/div, point[1]))
 	pan_param = Linseg(new_pan_data).play()
 
+	# Vibrato:
+	vibrato_data = track[6].getPoints()
+	new_vibrato_data = []
+	for point in vibrato_data:
+		new_vibrato_data.append((point[0] * 200*sol.spb/div, math.log10(point[1]*9 + 1)))
+	vibrato_param = Linseg(new_vibrato_data).play()
+	vibrato_lfo = Sine(freq=vibrato_param*15, mul=vibrato_param/20)
+
 	# Pitch modulation:
 	pitchmod_data = track[5].getPoints()
 	new_pitchmod_data = []
 	for point in pitchmod_data:
 		new_pitchmod_data.append((point[0] * 200*sol.spb/div, point[1]))
 	pitchmod_param = Linseg(new_pitchmod_data).play()
+	pitchmod_param += vibrato_lfo
+
 	
 
 

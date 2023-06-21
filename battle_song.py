@@ -54,7 +54,10 @@ def create_ui_track():
 	pan_graph = PyoGuiGrapher(parent=frame, pos=(0, 300), size=(50*200, 75), xlen=200, init=[(0,0.5), (1,0.5)])
 	pan_graph.Show()
 
-	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph]
+	pitch_modulation = PyoGuiGrapher(parent=frame, pos=(0, 375), size=(50*200, 75), xlen=200, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
+	pitch_modulation.Show()
+
+	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitch_modulation]
 
 track1 = create_ui_track()
 
@@ -78,6 +81,13 @@ def submit_for_playback(self, track):
 	for point in pan_data:
 		new_pan_data.append((point[0] * 200*sol.spb/div, point[1]))
 	pan_param = Linseg(new_pan_data).play()
+
+	# Pitch modulation:
+	pitchmod_data = track[5].getPoints()
+	new_pitchmod_data = []
+	for point in pitchmod_data:
+		new_pitchmod_data.append((point[0] * 200*sol.spb/div, point[1]))
+	pitchmod_param = Linseg(new_pitchmod_data).play()
 	
 
 
@@ -151,7 +161,7 @@ def submit_for_playback(self, track):
 	melody_track = sol.generate_track(
 		wave_table=LinTable(wave_table_data),
 		envelope_table=LinTable(envelope_table_data),
-		frequencies=sol.s2h(solfege, 49),
+		frequencies=sol.s2h(solfege, 49, pitchmod_param),
 		div = div,
 		mul=[volume_param * (1 - pan_param), volume_param * pan_param]
 	).out()

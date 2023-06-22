@@ -47,11 +47,13 @@ frame.Show()
 
 
 
-def create_solfege_table(parent, num_cells : int, pos : tuple = (0, 500), cell_size : tuple = (50, 25), color : str = "#f38ba8"):
+def create_solfege_table(parent, cell_font : wx.Font, num_cells : int, pos : tuple = (0, 500), cell_size : tuple = (50, 25), color : str = "#f38ba8"):
 	solfege_table = []
 	for i in range(num_cells):
 		widget = wx.TextCtrl(parent=parent, pos=(pos[0] + cell_size[0]*i, pos[1]), size=cell_size)
 		widget.BackgroundColour = color
+		widget.SetFont(cell_font.Bold())
+		widget.SetForegroundColour(wx.WHITE)
 		solfege_table.append(widget)
 		solfege_table[i].Show()
 	return solfege_table
@@ -105,66 +107,74 @@ def multiply_table(table : list, coefficient : tuple):
 # 		data = [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitchmod_graph, vibrato_graph]
 
 
-def create_ui_track(main_color : str = "#cba6f7", anchor : tuple = (0,0), cells : int = 200):
+def create_ui_track(main_color : str = "#cba6f7", color1 : str = "#acb0be", color2 : str = "#ccd0da", anchor : tuple = (0,0), cells : int = 200, pos : tuple = (0,0)):
 	font = wx.Font(14, family = wx.FONTFAMILY_ROMAN, style = 1, weight = 90, underline = False, 
 			faceName ="", encoding = wx.FONTENCODING_DEFAULT)
+	
+	solfege_font = wx.Font(14, family = wx.FONTFAMILY_MAX, style = 1, weight = 90, underline = False, 
+			faceName ="", encoding = wx.FONTENCODING_DEFAULT)
 
-	solfege_table = create_solfege_table(parent=frame, num_cells=cells, pos=(300, 0))
+	solfege_table = create_solfege_table(parent=frame, cell_font=solfege_font, num_cells=cells, pos=(pos[0] + 300, pos[1] + 0), color="#4c4f69")
 
 	# ENVELOPE:
-	envelope_table = PyoGuiGrapher(parent=frame, pos=(0, 0), size=(300, 162), init=[(0.0,0.0), (0.05,1.0), (0.2,0.5), (0.7,0.5), (1.0,0.0)])
+	envelope_table = PyoGuiGrapher(parent=frame, pos=(pos[0] + 0, pos[1] + 0), size=(300, 162), init=[(0.0,0.0), (0.05,1.0), (0.2,0.5), (0.7,0.5), (1.0,0.0)])
 	envelope_table.BackgroundColour = main_color
 	envelope_table.Show()
 
-	envelope_text = wx.StaticText(parent=frame, label="envelope", size=(300, 20), pos=(0, 15), style=wx.ALIGN_CENTER_HORIZONTAL)
+	envelope_text = wx.StaticText(parent=frame, label="envelope", size=(300, 20), pos=(pos[0] + 0, pos[1] + 15), style=wx.ALIGN_CENTER_HORIZONTAL)
 	envelope_text.SetFont(font.Italic())
 	envelope_text.Show()
 
 	# WAVE:
-	wave_table = PyoGuiGrapher(parent=frame, pos=(0, 162), size=(300, 162), yrange=(-1, 1), mode=1, init=[(0,0), (0.5,1), (1,0)])
+	wave_table = PyoGuiGrapher(parent=frame, pos=(pos[0] + 0, pos[1] + 162), size=(300, 162), yrange=(-1, 1), mode=1, init=[(0,0), (0.5,1), (1,0)])
 	wave_table.BackgroundColour = main_color
 	wave_table.Show()
 
-	wave_text = wx.StaticText(parent=frame, label="wave", size=(300, 20), pos=(0, 15 + 162), style=wx.ALIGN_CENTER_HORIZONTAL)
+	wave_text = wx.StaticText(parent=frame, label="wave", size=(300, 20), pos=(pos[0] + 0, pos[1] + 15 + 162), style=wx.ALIGN_CENTER_HORIZONTAL)
 	wave_text.SetFont(font.Italic())
 	wave_text.Show()
 
 	# VOLUME:
-	volume_graph = PyoGuiGrapher(parent=frame, pos=(300, 25), size=(50*cells, 75), xlen=cells, yrange=(1, 10), init=[(0,0.5), (1,0.5)])
+	volume_graph = PyoGuiGrapher(parent=frame, pos=(pos[0] + 300, pos[1] + 25), size=(50*cells, 75), xlen=cells, yrange=(1, 10), init=[(0,0.5), (1,0.5)])
+	volume_graph.BackgroundColour = color1
 	volume_graph.Show()
 
-	volume_text = wx.StaticText(parent=frame, label="volume", pos=(300 + 35, 25 + 15), style=wx.ALIGN_CENTER_HORIZONTAL)
+	volume_text = wx.StaticText(parent=frame, label="volume", pos=(pos[0] + 300 + 35, pos[1] + 25 + 15), style=wx.ALIGN_CENTER_HORIZONTAL)
 	volume_text.SetFont(font.Italic())
 	volume_text.Show()
 
 	# PAN:
-	pan_graph = PyoGuiGrapher(parent=frame, pos=(300, 100), size=(50*cells, 75), xlen=cells, init=[(0,0.5), (1,0.5)])
+	pan_graph = PyoGuiGrapher(parent=frame, pos=(pos[0] + 300, pos[1] + 100), size=(50*cells, 75), xlen=cells, init=[(0,0.5), (1,0.5)])
+	pan_graph.BackgroundColour = color2
 	pan_graph.Show()
 
-	pan_text = wx.StaticText(parent=frame, label="pan", pos=(300 + 35, 100 + 15), size=(50, 20))
+	pan_text = wx.StaticText(parent=frame, label="pan", pos=(pos[0] + 300 + 35, pos[1] + 100 + 15), size=(50, 20))
 	pan_text.SetFont(font.Italic())
 	pan_text.Show()
 
 	# PITCHMOD:
-	pitchmod_graph = PyoGuiGrapher(parent=frame, pos=(300, 175), size=(50*cells, 75), xlen=cells, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
+	pitchmod_graph = PyoGuiGrapher(parent=frame, pos=(pos[0] + 300, pos[1] + 175), size=(50*cells, 75), xlen=cells, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
+	pitchmod_graph.BackgroundColour = color1
 	pitchmod_graph.Show()
 
-	pitchmod_text = wx.StaticText(parent=frame, label="pitch modulation", pos=(300 + 35, 175 + 15), size=(100, 20))
+	pitchmod_text = wx.StaticText(parent=frame, label="pitch modulation", pos=(pos[0] + 300 + 35, pos[1] + 175 + 15), size=(100, 20))
 	pitchmod_text.SetFont(font.Italic())
 	pitchmod_text.Show()
 
 	# VIBRATO:
-	vibrato_graph = PyoGuiGrapher(parent=frame, pos=(300, 250), size=(50*cells, 75), xlen=cells, init=[(0,0), (1,0)])
+	vibrato_graph = PyoGuiGrapher(parent=frame, pos=(pos[0] + 300, pos[1] + 250), size=(50*cells, 75), xlen=cells, init=[(0,0), (1,0)])
+	vibrato_graph.BackgroundColour = color2
 	vibrato_graph.Show()
 
-	vibrato_text = wx.StaticText(parent=frame, label="vibrato", pos=(300 + 35, 250 + 15), size=(100, 20))
+	vibrato_text = wx.StaticText(parent=frame, label="vibrato", pos=(pos[0] + 300 + 35, pos[1] + 250 + 15), size=(100, 20))
 	vibrato_text.SetFont(font.Italic())
 	vibrato_text.Show()
 
 	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitchmod_graph, vibrato_graph]
 
 
-track1 = create_ui_track()
+track1 = create_ui_track(main_color="#cba6f7")
+track2 = create_ui_track(pos=(0, 325), main_color="#fab387")
 # track1UI = Track(parent=frame, cells=200)
 # track1 = track1UI.data
 

@@ -1,12 +1,50 @@
 from soltracker import *
 import wx
 import wx.grid as gridlib
+import wx.lib.scrolledpanel as scrolled
 
 sol = Soltracker(75)
 
+
+
+# class ScrollbarFrame(wx.Frame):
+#     def __init__(self):
+#         wx.Frame.__init__(self, None, -1, 'Scrollbar Example', size=(300, 200))
+#         self.scroll = wx.ScrolledWindow(self, -1)
+#         self.scroll.SetScrollbars(1, 1, 600, 400)
+#         self.button = wx.Button(self.scroll, -1, "Scroll Me", pos=(50, 20))
+#         self.Bind(wx.EVT_BUTTON,  self.OnClickTop, self.button)
+#         self.button2 = wx.Button(self.scroll, -1, "Scroll Back", pos=(500, 350))
+#         self.Bind(wx.EVT_BUTTON, self.OnClickBottom, self.button2)
+
+#     def OnClickTop(self, event):
+#         self.scroll.Scroll(600, 400)
+        
+#     def OnClickBottom(self, event):
+#         self.scroll.Scroll(1, 1)
+
+
 app = wx.App()
-frame = wx.Frame(None, title="Hello World")
+frame = wx.Frame(None, title="SOLTRACKER")
 frame.Show()
+# scroll = wx.ScrolledWindow(parent=frame)
+# scroll.SetScrollbars(1, 1, 600, 400)
+# scroll.Show()
+
+# frame = wx.ScrolledWindow(parent=frame1)
+# frame.SetScrollRate(10, 10)
+# # frame = wx.Panel()
+# frame.Show()
+# frame.SetScrollbars(1, 1, 10, 10)
+
+# frame = ScrollbarFrame()
+# frame.Show()
+
+# panel = wx.Panel()
+# scrolled_panel = scrolled.ScrolledPanel(panel)
+# scrolled_panel.SetAutoLayout(1)
+# scrolled_panel.SetupScrolling()
+
 
 slider = PyoGuiControlSlider(parent=frame, minvalue=0, maxvalue=1)
 slider.Show()
@@ -39,30 +77,63 @@ def multiply_table(table : list, coefficient : tuple):
 	return new_table
 
 
-def create_ui_track():
-	solfege_table = create_solfege_table(parent=frame, num_cells=200, pos=(0, 200))
+# class Track(wx.Panel):
+# 	data = []
 
-	envelope_table = PyoGuiGrapher(parent=frame, init=[(0.0,0.0), (0.05,1.0), (0.2,0.5), (0.7,0.5), (1.0,0.0)])
+# 	def __init__(self, parent, cells=200):
+# 		wx.Panel.__init__(self, parent)
+# 		self.SetBackgroundColour(wx.RED)
+
+# 		solfege_table = create_solfege_table(parent=frame, num_cells=cells, pos=(300, 0))
+
+# 		envelope_table = PyoGuiGrapher(parent=frame, pos=(0, 0), init=[(0.0,0.0), (0.05,1.0), (0.2,0.5), (0.7,0.5), (1.0,0.0)])
+# 		envelope_table.Show()
+
+# 		wave_table = PyoGuiGrapher(parent=frame, pos=(0, 200), yrange=(-1, 1), mode=1, init=[(0,0), (0.5,1), (1,0)])
+# 		wave_table.Show()
+
+# 		volume_graph = PyoGuiGrapher(parent=frame, pos=(300, 25), size=(50*cells, 75), xlen=cells, yrange=(1, 10), init=[(0,0.5), (1,0.5)])
+# 		volume_graph.Show()
+
+# 		pan_graph = PyoGuiGrapher(parent=frame, pos=(300, 100), size=(50*cells, 75), xlen=cells, init=[(0,0.5), (1,0.5)])
+# 		pan_graph.Show()
+
+# 		pitchmod_graph = PyoGuiGrapher(parent=frame, pos=(300, 175), size=(50*cells, 75), xlen=cells, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
+# 		pitchmod_graph.Show()
+
+# 		vibrato_graph = PyoGuiGrapher(parent=frame, pos=(300, 250), size=(50*cells, 75), xlen=cells, init=[(0,0), (1,0)])
+# 		vibrato_graph.Show()
+
+# 		data = [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitchmod_graph, vibrato_graph]
+
+
+def create_ui_track(anchor : tuple = (0,0), cells : int = 200):
+	solfege_table = create_solfege_table(parent=frame, num_cells=cells, pos=(300, 0))
+
+	envelope_table = PyoGuiGrapher(parent=frame, pos=(0, 0), init=[(0.0,0.0), (0.05,1.0), (0.2,0.5), (0.7,0.5), (1.0,0.0)])
 	envelope_table.Show()
 
-	wave_table = PyoGuiGrapher(parent=frame, pos=(300, 0), yrange=(-1, 1), mode=1, init=[(0,0), (0.5,1), (1,0)])
+	wave_table = PyoGuiGrapher(parent=frame, pos=(0, 200), yrange=(-1, 1), mode=1, init=[(0,0), (0.5,1), (1,0)])
 	wave_table.Show()
 
-	volume_graph = PyoGuiGrapher(parent=frame, pos=(0, 225), size=(50*200, 75), xlen=200, yrange=(1, 10), init=[(0,0.5), (1,0.5)])
+	volume_graph = PyoGuiGrapher(parent=frame, pos=(300, 25), size=(50*cells, 75), xlen=cells, yrange=(1, 10), init=[(0,0.5), (1,0.5)])
 	volume_graph.Show()
 
-	pan_graph = PyoGuiGrapher(parent=frame, pos=(0, 300), size=(50*200, 75), xlen=200, init=[(0,0.5), (1,0.5)])
+	pan_graph = PyoGuiGrapher(parent=frame, pos=(300, 100), size=(50*cells, 75), xlen=cells, init=[(0,0.5), (1,0.5)])
 	pan_graph.Show()
 
-	pitchmod_graph = PyoGuiGrapher(parent=frame, pos=(0, 375), size=(50*200, 75), xlen=200, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
+	pitchmod_graph = PyoGuiGrapher(parent=frame, pos=(300, 175), size=(50*cells, 75), xlen=cells, yrange=(0, 2), init=[(0,0.5), (1,0.5)])
 	pitchmod_graph.Show()
 
-	vibrato_graph = PyoGuiGrapher(parent=frame, pos=(0, 450), size=(50*200, 75), xlen=200, init=[(0,0), (1,0)])
+	vibrato_graph = PyoGuiGrapher(parent=frame, pos=(300, 250), size=(50*cells, 75), xlen=cells, init=[(0,0), (1,0)])
 	vibrato_graph.Show()
 
 	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitchmod_graph, vibrato_graph]
 
+
 track1 = create_ui_track()
+# track1UI = Track(parent=frame, cells=200)
+# track1 = track1UI.data
 
 
 def submit_for_playback(self, track):

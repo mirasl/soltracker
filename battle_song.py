@@ -173,10 +173,30 @@ def create_ui_track(main_color : str = "#cba6f7", color1 : str = "#acb0be", colo
 	return [solfege_table, envelope_table, wave_table, volume_graph, pan_graph, pitchmod_graph, vibrato_graph]
 
 
-track1 = create_ui_track(main_color="#cba6f7")
-track2 = create_ui_track(pos=(0, 325), main_color="#fab387")
-# track1UI = Track(parent=frame, cells=200)
-# track1 = track1UI.data
+title_font = wx.Font(60, family = wx.FONTFAMILY_DECORATIVE, style = 1, weight = 90, 
+		underline = False, faceName ="", encoding = wx.FONTENCODING_DEFAULT)
+title = wx.StaticText(parent=frame, label="soltracker", pos=(20,-10), size=(400, 100))
+title.SetFont(title_font.Italic())
+title.Show()
+
+bpm_font = wx.Font(20, family = wx.FONTFAMILY_ROMAN, style = 1, weight = 90, 
+		underline = False, faceName ="", encoding = wx.FONTENCODING_DEFAULT)
+bpm_text = wx.StaticText(parent=frame, label="bpm:", pos=(320, 33), size=(100, 100))
+bpm_text.SetFont(bpm_font.Italic())
+bpm_text.Show()
+
+bpm_font.SetPointSize(16)
+bpm_input = wx.TextCtrl(parent=frame, pos=(320 + 60, 30), size=(70, 30))
+bpm_input.SetFont(bpm_font.Italic())
+bpm_input.Show()
+
+# title_font.SetPointSize(15)
+# title = wx.StaticText(parent=frame, label="", pos=(310, 5), size=(310, 100))
+# title.SetFont(title_font.Italic())
+# title.Show()
+
+track1 = create_ui_track(pos=(0, 90), main_color="#cba6f7")
+track2 = create_ui_track(pos=(0,325 + 90), main_color="#fab387")
 
 
 def submit_for_playback(self, track):
@@ -296,7 +316,10 @@ def submit_for_playback(self, track):
 	sol.s.gui(locals())
 
 
-button = wx.Button(parent=frame, pos=(500, 500))
+button_font = wx.Font(15, family = wx.FONTFAMILY_ROMAN, style = 1, weight = 90, 
+		underline = False, faceName ="", encoding = wx.FONTENCODING_DEFAULT)
+button = wx.Button(parent=frame, pos=(460, 30), label="  submit playback  ")
+button.SetFont(button_font.Italic())
 button.Bind(wx.EVT_BUTTON, lambda event: submit_for_playback(event, track1))
 
 app.MainLoop()

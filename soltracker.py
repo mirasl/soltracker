@@ -1,13 +1,7 @@
 from pyo import *
 import random
-	# import wx
 
-	# app = wx.App()
-	# frame = wx.Frame(None, title="Hello World")
-	# frame.Show()
-	# slider = PyoGuiControlSlider(parent=frame, minvalue=0,maxvalue=1)
-	# slider.Show()
-	# # app.MainLoop()
+
 class Soltracker:
 	s = Server(duplex=0).boot()
 
@@ -15,10 +9,6 @@ class Soltracker:
 
 	def __init__(self, bpm) -> None:
 		self.spb = 60 / bpm
-	
-	print(spb)
-	
-	#s = Server(sr=44100, nchnls=2, buffersize=512, duplex=2, audio='jack').boot()
 
 	frequencies = [
 		16.35, 	17.32, 	18.35, 	19.45, 	20.60, 	21.83, 	23.12, 	24.50, 	25.96, 	27.50, 	29.14, 	30.87,
@@ -161,87 +151,4 @@ class Soltracker:
 					div, mul, feedback))
 		# tracks = self.generate_noise_track(wave_table, envelope_table, frequency_list, div, mul, feedback)
 		return tracks
-
-	"""
-	Basic stuff:
-		Each instrument has a
-			- Table (of harmonics)
-			- Envelope
-
-		A track contains
-			- Instrument
-			- Pitches
-			- Automation channels (bus to them??)
-
-	More:
-		Modifiers (ordered roughly from most to least important)
-			- Volume
-				control mul with sequence
-			- Panning
-				???
-			- Note length (rest vs hold)
-				???
-			- Vibrato
-				??? apply an oscillator and feed that into frequency
-			- Pitch bend
-				??? interpolate between frequencies
-			- EQ shift over time
-				maybe combine with volume???
-			- Tempo
-				??? this is tough because dur is calculated at beginning
-			- Microtonal pitches
-				???
-			- Tone shift over time
-				???
-
-	Workflow:
-		Create a new track
-			- Create a wave table
-			- Create an envelope table
-			- Input frequency list
-			- Input other info (max volume, base duration, etc) as necessary
-		Create a channel
-			- Select type (pitch bend, vibrato, volume, etc)
-			- Input channel list
-		Bus to channels
-			- Link a track to a channel
-
-	OVERALL:
-	- Header (bpm and stuff)
-	- Tracks (instruments and their notes/frequencies)
-	- Channels (gradual modifiers)
-	- Buses (link tracks to channels)
-
-	ALTERNATE PLAN:
-	- Create header
-		- bpm
-	- Create tracks
-		- Wavetables
-	- Create automation components
-		- Pitch
-			table of frequencies
-			??? also include note length vs rest ???
-
-		- Envelope DONE
-			standard ADSR table
-
-		- MacroDynamics DONE
-			control signal representing max volume over time
-
-		- Pan DONE
-			control signal representing percentage, from 0.0 to 1.0, of the signal gotten by the LEFT
-			channel. Ex. 0.5 => even panning, 0.3 => mostly right, 1.0 => completely left
 		
-		- PitchModulation DONE
-			control signal representing frequency scaling of given note. Can be used for PITCH
-			BENDS, or for MICROTONAL pitches
-			Multiplied by frequency (value of 1 results in normal sound)
-			Can also achieve PITCH VIBRATO by applying an LFO, should find an easy way to do this.
-	
-	- Create master
-		- specifies the order of tracks and when to play them
-
-		
-
-	- Link automation components to tracks
-	"""

@@ -18,6 +18,8 @@ def create_solfege_table(parent, cell_font : wx.Font, num_cells : int, pos : tup
 		widget.BackgroundColour = color
 		widget.SetFont(cell_font.Bold())
 		widget.SetForegroundColour(wx.WHITE)
+		if (i == 0):
+			widget.SetValue("0")
 		solfege_table.append(widget)
 		solfege_table[i].Show()
 	return solfege_table
@@ -131,6 +133,7 @@ bpm_text.Show()
 bpm_font.SetPointSize(16)
 bpm_input = wx.TextCtrl(parent=frame, pos=(320 + 60, 30), size=(70, 30))
 bpm_input.SetFont(bpm_font.Italic())
+bpm_input.SetValue("120")
 bpm_input.Show()
 
 
@@ -141,6 +144,8 @@ tracks = [track1, track2]
 
 
 def submit_for_playback(self, tracks):
+	sol.spb = 60 / float(bpm_input.GetValue())
+	
 	outputs = []
 	for track in tracks:
 		div = 6
@@ -188,6 +193,7 @@ def submit_for_playback(self, tracks):
 		).out()
 
 		outputs.append(output_track)
+
 
 	sol.s.gui(locals())
 
